@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-modern;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-elegant;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-romantic-600 hover:bg-romantic-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-romantic-600 border-2 border-romantic-600 font-medium py-3 px-6 rounded-lg transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent outline-none transition-all;
+  }
+}

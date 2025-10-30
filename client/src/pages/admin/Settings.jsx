@@ -1,0 +1,218 @@
+import { useState, useEffect } from 'react';
+import { settingsAPI } from '../../utils/api';
+import { toast } from 'react-toastify';
+
+const Settings = () => {
+  const [settings, setSettings] = useState({
+    upload_enabled: true,
+    event_info: {
+      couple_names: '',
+      date: '',
+      location: '',
+      description: ''
+    }
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      setLoading(true);
+      const response = await settingsAPI.get();
+      setSettings({
+        ...response.data,
+        event_info: {
+          ...response.data.event_info,
+          date: response.data.event_info.date
+            ? new Date(response.data.event_info.date).toISOString().split('T')[0]
+            : ''
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+      toast.error('Ayarlar yüklenirken hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      await settingsAPI.update(settings);
+      toast.success('Ayarlar kaydedildi!');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast.error('Ayarlar kaydedilirken hata oluştu');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEventInfoChange = (field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      event_info: {
+        ...prev.event_info,
+        [field]: value
+      }
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-romantic-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Ayarlar</h1>
+        <p className="text-gray-600">Etkinlik bilgilerini ve genel ayarları düzenleyin</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Event Information */}
+        <div className="card">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Etkinlik Bilgileri</h2>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Çift İsimleri
+              </label>
+              <input
+                type="text"
+                value={settings.event_info.couple_names}
+                onChange={(e) => handleEventInfoChange('couple_names', e.target.value)}
+                className="input-field"
+                placeholder="Ayşe & Mehmet"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Etkinlik Tarihi
+              </label>
+              <input
+                type="date"
+                value={settings.event_info.date}
+                onChange={(e) => handleEventInfoChange('date', e.target.value)}
+                className="input-field"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mekan
+              </label>
+              <input
+                type="text"
+                value={settings.event_info.location}
+                onChange={(e) => handleEventInfoChange('location', e.target.value)}
+                className="input-field"
+                placeholder="Düğün Salonu, İstanbul"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Açıklama
+              </label>
+              <textarea
+                value={settings.event_info.description}
+                onChange={(e) => handleEventInfoChange('description', e.target.value)}
+                className="input-field"
+                rows="3"
+                placeholder="Mutluluğumuzu sizinle paylaşmak istiyoruz!"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Upload Settings */}
+        <div className="card">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Yükleme Ayarları</h2>
+
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div>
+              <h3 className="font-bold text-gray-800 mb-1">Fotoğraf Yükleme</h3>
+              <p className="text-sm text-gray-600">
+                Kullanıcıların fotoğraf yüklemesine izin ver
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSettings(prev => ({
+                ...prev,
+                upload_enabled: !prev.upload_enabled
+              }))}
+              className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${
+                settings.upload_enabled ? 'bg-green-600' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                  settings.upload_enabled ? 'translate-x-9' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={saving}
+            className="btn-primary text-lg px-8 disabled:opacity-50"
+          >
+            {saving ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
+          </button>
+        </div>
+      </form>
+
+      {/* Preview */}
+      <div className="card mt-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Anasayfa Önizlemesi</h2>
+        <div className="bg-gradient-to-br from-pastel-pink via-pastel-lavender to-pastel-peach p-8 rounded-lg">
+          <div className="text-center">
+            <h1 className="text-5xl font-elegant font-bold text-romantic-700 mb-4">
+              {settings.event_info.couple_names || 'Çift İsimleri'}
+            </h1>
+            <div className="flex items-center justify-center gap-4 text-gray-600 mb-4">
+              <div className="h-px w-16 bg-romantic-400"></div>
+              <p className="text-xl">
+                {settings.event_info.date
+                  ? new Date(settings.event_info.date).toLocaleDateString('tr-TR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })
+                  : 'Tarih'}
+              </p>
+              <div className="h-px w-16 bg-romantic-400"></div>
+            </div>
+            {settings.event_info.location && (
+              <p className="text-lg text-gray-500 mb-4">{settings.event_info.location}</p>
+            )}
+            <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+              {settings.event_info.description || 'Açıklama'}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Settings;
