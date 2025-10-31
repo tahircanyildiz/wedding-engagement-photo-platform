@@ -75,16 +75,26 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Fotoğraf bulunamadı' });
     }
 
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(photo.cloudinary_public_id);
+    // Try to delete from Cloudinary, but don't fail if it errors
+    try {
+      await cloudinary.uploader.destroy(photo.cloudinary_public_id);
+      console.log(`Cloudinary'den silindi: ${photo.cloudinary_public_id}`);
+    } catch (cloudinaryError) {
+      // Log but continue - we'll still delete from DB
+      console.error(`Cloudinary silme hatası (${photo.cloudinary_public_id}):`, cloudinaryError.message);
+    }
 
-    // Delete from database
+    // Delete from database (this should always work)
     await Photo.findByIdAndDelete(req.params.id);
 
     res.json({ message: 'Fotoğraf başarıyla silindi' });
   } catch (error) {
     console.error('Delete photo error:', error);
-    res.status(500).json({ message: 'Fotoğraf silinirken hata oluştu' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({
+      message: 'Fotoğraf silinirken hata oluştu',
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message
+    });
   }
 });
 
