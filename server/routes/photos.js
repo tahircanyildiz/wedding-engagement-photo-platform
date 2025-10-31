@@ -99,19 +99,34 @@ router.post('/bulk-delete', authMiddleware, async (req, res) => {
 
     const photos = await Photo.find({ _id: { $in: photoIds } });
 
-    // Delete from Cloudinary
+    if (photos.length === 0) {
+      return res.status(404).json({ message: 'Fotoğraf bulunamadı' });
+    }
+
+    // Delete from Cloudinary (ignore errors for missing images)
     const deletePromises = photos.map(photo =>
       cloudinary.uploader.destroy(photo.cloudinary_public_id)
+        .catch(err => {
+          console.log(`Cloudinary silme hatası (devam ediliyor): ${err.message}`);
+          return { result: 'not found' }; // Continue anyway
+        })
     );
     await Promise.all(deletePromises);
 
     // Delete from database
-    await Photo.deleteMany({ _id: { $in: photoIds } });
+    const result = await Photo.deleteMany({ _id: { $in: photoIds } });
 
-    res.json({ message: `${photoIds.length} fotoğraf başarıyla silindi` });
+    res.json({
+      message: `${result.deletedCount} fotoğraf başarıyla silindi`,
+      deletedCount: result.deletedCount
+    });
   } catch (error) {
     console.error('Bulk delete error:', error);
-    res.status(500).json({ message: 'Fotoğraflar silinirken hata oluştu' });
+    console.error('Error details:', error.message);
+    res.status(500).json({
+      message: 'Fotoğraflar silinirken hata oluştu',
+      error: error.message
+    });
   }
 });
 
