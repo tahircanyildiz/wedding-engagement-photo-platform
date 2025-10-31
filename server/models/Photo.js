@@ -20,7 +20,6 @@ const photoSchema = new mongoose.Schema({
   }
 });
 
-// Index for faster queries
 photoSchema.index({ upload_date: -1 });
 photoSchema.index({ uploader_name: 1 });
 

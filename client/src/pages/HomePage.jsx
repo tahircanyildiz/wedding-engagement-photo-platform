@@ -48,8 +48,10 @@ const HomePage = () => {
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           {/* Names */}
           <div className="mb-8 animate-fade-in">
-            <h1 className="text-6xl md:text-8xl font-elegant font-bold text-romantic-700 mb-4">
-              {eventInfo.couple_names || 'Ayşe & Mehmet'}
+            <h1 className="text-6xl md:text-8xl font-elegant font-bold text-romantic-700 mb-4 flex flex-col md:flex-row md:gap-4 justify-center items-center">
+              {(eventInfo.couple_names || 'Tahir & Özge').split(' ').map((word, index) => (
+                <span key={index} className="whitespace-nowrap">{word}</span>
+              ))}
             </h1>
             <div className="flex items-center justify-center gap-4 text-gray-600">
               <div className="h-px w-16 bg-romantic-400"></div>

@@ -8,7 +8,7 @@ const settingsSchema = new mongoose.Schema({
   event_info: {
     couple_names: {
       type: String,
-      default: 'Ayşe & Mehmet'
+      default: 'Tahir & Özge'
     },
     date: {
       type: Date,
@@ -29,7 +29,6 @@ const settingsSchema = new mongoose.Schema({
   }
 });
 
-// Only one settings document should exist
 settingsSchema.statics.getSettings = async function() {
   let settings = await this.findOne();
   if (!settings) {
