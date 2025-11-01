@@ -39,9 +39,16 @@ app.use('/api/photos', require('./routes/photos'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/qrcode', require('./routes/qrcode'));
 
-// Health check
+// Health check endpoint for cron jobs
+const startTime = Date.now();
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+  const uptime = Math.floor((Date.now() - startTime) / 1000);
+  res.json({
+    status: 'ok',
+    message: 'Server is running',
+    uptime: `${uptime} seconds`,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Error handling middleware
