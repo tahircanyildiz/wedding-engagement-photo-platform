@@ -17,12 +17,16 @@ router.get('/', async (req, res) => {
 // Update settings (Admin only)
 router.put('/', authMiddleware, async (req, res) => {
   try {
-    const { upload_enabled, event_info } = req.body;
+    const { upload_enabled, gallery_filter_enabled, event_info } = req.body;
 
     const settings = await Settings.getSettings();
 
     if (upload_enabled !== undefined) {
       settings.upload_enabled = upload_enabled;
+    }
+
+    if (gallery_filter_enabled !== undefined) {
+      settings.gallery_filter_enabled = gallery_filter_enabled;
     }
 
     if (event_info) {
