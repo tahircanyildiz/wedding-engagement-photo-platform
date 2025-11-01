@@ -132,7 +132,7 @@ const QRCodeManagement = () => {
               <div>
                 <h3 className="font-bold text-gray-800 mb-1">Yazdır ve Paylaş</h3>
                 <p className="text-gray-600 text-sm">
-                  QR kodu yazdırıp düğün mekanınıza yerleştirin veya davetiyelerinize ekleyin.
+                  QR kodu yazdırıp nişan mekanınıza yerleştirin veya davetiyelerinize ekleyin.
                 </p>
               </div>
             </div>
@@ -170,7 +170,7 @@ const QRCodeManagement = () => {
           <div className="bg-gradient-to-br from-pastel-pink via-pastel-lavender to-pastel-peach p-8 rounded-lg">
             <div className="bg-white rounded-xl shadow-xl p-8 max-w-md mx-auto text-center">
               <h3 className="text-2xl font-elegant font-bold text-romantic-700 mb-2">
-                {qrCode.eventInfo?.couple_names || 'Düğünümüz'}
+                {qrCode.eventInfo?.couple_names || 'Nişanımız'}
               </h3>
               <p className="text-gray-600 mb-6">Fotoğraflarınızı Paylaşın</p>
               <img

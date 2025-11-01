@@ -158,7 +158,7 @@ const UploadPage = () => {
               Fotoğraf Yükle
             </h1>
             <p className="text-gray-600 text-lg">
-              Düğünden çektiğiniz fotoğrafları bizimle paylaşın
+              Nişandan çektiğiniz fotoğrafları bizimle paylaşın
             </p>
           </div>
 

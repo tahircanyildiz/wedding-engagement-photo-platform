@@ -131,7 +131,7 @@ const HomePage = () => {
             Anılarımızı Paylaşın
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-8">
-            Düğünümüzde çektiğiniz fotoğrafları bizimle paylaşarak bu özel günü
+            Nişanımızda çektiğiniz fotoğrafları bizimle paylaşarak bu özel günü
             ölümsüzleştirmemize yardımcı olabilirsiniz. Tüm fotoğraflar galerimizde
             toplanacak ve herkes tarafından görülebilecek.
           </p>

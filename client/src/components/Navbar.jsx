@@ -6,7 +6,7 @@ const Navbar = ({ transparent = false }) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="text-2xl font-elegant font-bold text-romantic-600">
-            Düğün Anılarımız
+            Nişan Anılarımız
           </Link>
           <div className="flex gap-4">
             <Link

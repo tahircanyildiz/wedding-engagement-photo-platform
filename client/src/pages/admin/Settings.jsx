@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 const Settings = () => {
   const [settings, setSettings] = useState({
     upload_enabled: true,
+    gallery_filter_enabled: true,
     event_info: {
       couple_names: '',
       date: '',
@@ -120,7 +121,7 @@ const Settings = () => {
                 value={settings.event_info.location}
                 onChange={(e) => handleEventInfoChange('location', e.target.value)}
                 className="input-field"
-                placeholder="Düğün Salonu, İstanbul"
+                placeholder="Nişan Salonu, İstanbul"
               />
             </div>
 
@@ -139,33 +140,62 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Upload Settings */}
+        {/* Upload & Gallery Settings */}
         <div className="card">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Yükleme Ayarları</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Genel Ayarlar</h2>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h3 className="font-bold text-gray-800 mb-1">Fotoğraf Yükleme</h3>
-              <p className="text-sm text-gray-600">
-                Kullanıcıların fotoğraf yüklemesine izin ver
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setSettings(prev => ({
-                ...prev,
-                upload_enabled: !prev.upload_enabled
-              }))}
-              className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${
-                settings.upload_enabled ? 'bg-green-600' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                  settings.upload_enabled ? 'translate-x-9' : 'translate-x-1'
+          <div className="space-y-4">
+            {/* Upload Toggle */}
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-1">Fotoğraf Yükleme</h3>
+                <p className="text-sm text-gray-600">
+                  Kullanıcıların fotoğraf yüklemesine izin ver
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSettings(prev => ({
+                  ...prev,
+                  upload_enabled: !prev.upload_enabled
+                }))}
+                className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${
+                  settings.upload_enabled ? 'bg-green-600' : 'bg-gray-300'
                 }`}
-              />
-            </button>
+              >
+                <span
+                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                    settings.upload_enabled ? 'translate-x-9' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Gallery Filter Toggle */}
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-1">Galeri Filtreleme</h3>
+                <p className="text-sm text-gray-600">
+                  Galeri sayfasında fotoğraf filtreleme özelliğini göster
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSettings(prev => ({
+                  ...prev,
+                  gallery_filter_enabled: !prev.gallery_filter_enabled
+                }))}
+                className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${
+                  settings.gallery_filter_enabled ? 'bg-green-600' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                    settings.gallery_filter_enabled ? 'translate-x-9' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
 

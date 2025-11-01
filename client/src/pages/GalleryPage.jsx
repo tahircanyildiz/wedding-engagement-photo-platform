@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { photosAPI } from '../utils/api';
+import { photosAPI, settingsAPI } from '../utils/api';
 import Navbar from '../components/Navbar';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
@@ -15,10 +15,23 @@ const GalleryPage = () => {
   const [filterUploader, setFilterUploader] = useState('');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [filterEnabled, setFilterEnabled] = useState(true);
 
   useEffect(() => {
+    fetchSettings();
     fetchPhotos();
   }, [sortBy]);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await settingsAPI.get();
+      setFilterEnabled(response.data.gallery_filter_enabled !== false);
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+      // Default to true if error
+      setFilterEnabled(true);
+    }
+  };
 
   const fetchPhotos = async () => {
     try {
@@ -92,38 +105,40 @@ const GalleryPage = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Sort */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sıralama
-                </label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="input-field"
-                >
-                  <option value="newest">En Yeni</option>
-                  <option value="oldest">En Eski</option>
-                </select>
-              </div>
+          {filterEnabled && (
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Sort */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sıralama
+                  </label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="newest">En Yeni</option>
+                    <option value="oldest">En Eski</option>
+                  </select>
+                </div>
 
-              {/* Filter by uploader */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Yükleyene Göre Filtrele
-                </label>
-                <input
-                  type="text"
-                  placeholder="İsim ile ara..."
-                  value={filterUploader}
-                  onChange={(e) => setFilterUploader(e.target.value)}
-                  className="input-field"
-                />
+                {/* Filter by uploader */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Yükleyene Göre Filtrele
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="İsim ile ara..."
+                    value={filterUploader}
+                    onChange={(e) => setFilterUploader(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Loading State */}
           {loading && (

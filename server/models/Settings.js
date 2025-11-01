@@ -5,6 +5,10 @@ const settingsSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  gallery_filter_enabled: {
+    type: Boolean,
+    default: true
+  },
   event_info: {
     couple_names: {
       type: String,
