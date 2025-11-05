@@ -1,6 +1,7 @@
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { removeToken } from '../../utils/auth';
+import { authAPI } from '../../utils/api';
 import { toast } from 'react-toastify';
 import Dashboard from './Dashboard';
 import PhotoManagement from './PhotoManagement';
@@ -13,10 +14,16 @@ const AdminDashboard = () => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    removeToken();
-    toast.success('Çıkış yapıldı');
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      removeToken();
+      toast.success('Çıkış yapıldı');
+      navigate('/admin/login');
+    }
   };
 
   const isActive = (path) => {

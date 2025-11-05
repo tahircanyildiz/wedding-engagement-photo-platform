@@ -25,15 +25,27 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Geçersiz kullanıcı adı veya şifre' });
     }
 
-    // Generate JWT
-    const token = jwt.sign(
+    // Generate Access Token (30 minutes)
+    const accessToken = jwt.sign(
+      { id: admin._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '30m' }
+    );
+
+    // Generate Refresh Token (7 days)
+    const refreshToken = jwt.sign(
       { id: admin._id },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
+    // Save refresh token to database
+    admin.refreshToken = refreshToken;
+    await admin.save();
+
     res.json({
-      token,
+      accessToken,
+      refreshToken,
       admin: {
         id: admin._id,
         username: admin.username
@@ -42,6 +54,53 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// Refresh Token
+router.post('/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token gerekli' });
+    }
+
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+    // Find admin and check if refresh token matches
+    const admin = await Admin.findById(decoded.id);
+    if (!admin || admin.refreshToken !== refreshToken) {
+      return res.status(401).json({ message: 'Geçersiz refresh token' });
+    }
+
+    // Generate new access token
+    const accessToken = jwt.sign(
+      { id: admin._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '30m' }
+    );
+
+    res.json({ accessToken });
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    res.status(401).json({ message: 'Geçersiz veya süresi dolmuş refresh token' });
+  }
+});
+
+// Logout
+router.post('/logout', authMiddleware, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.id);
+    if (admin) {
+      admin.refreshToken = null;
+      await admin.save();
+    }
+    res.json({ message: 'Çıkış yapıldı' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ message: 'Çıkış yapılırken hata oluştu' });
   }
 });
 

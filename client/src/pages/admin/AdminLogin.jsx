@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../../utils/api';
-import { setToken } from '../../utils/auth';
+import { setToken, setRefreshToken } from '../../utils/auth';
 import { toast } from 'react-toastify';
 
 const AdminLogin = () => {
@@ -24,7 +24,8 @@ const AdminLogin = () => {
 
     try {
       const response = await authAPI.login(credentials);
-      setToken(response.data.token);
+      setToken(response.data.accessToken);
+      setRefreshToken(response.data.refreshToken);
       toast.success('Giriş başarılı!');
       navigate('/admin/dashboard');
     } catch (error) {
