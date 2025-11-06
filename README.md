@@ -2,6 +2,7 @@
 
 Modern, kullanıcı dostu ve tamamen responsive bir düğün/nişan fotoğraf paylaşım ve anı defteri uygulaması.
 
+
 ## 📋 İçindekiler
 
 - [Özellikler](#özellikler-)
@@ -14,6 +15,7 @@ Modern, kullanıcı dostu ve tamamen responsive bir düğün/nişan fotoğraf pa
 - [Güvenlik](#güvenlik-)
 - [Proje Yapısı](#proje-yapısı-)
 
+
 ## Özellikler ✨
 
 - 📸 **Fotoğraf Galerisi** - Cloudinary entegrasyonu ile modern grid layout
@@ -23,6 +25,7 @@ Modern, kullanıcı dostu ve tamamen responsive bir düğün/nişan fotoğraf pa
 - 📱 **Responsive Tasarım** - Tüm cihazlarda mükemmel görünüm
 - 🎨 **Modern UI** - Güzel gradient arkaplanlar ve animasyonlar
 - 🔒 **JWT Authentication** - Refresh token ile güvenli admin erişimi
+
 
 ## Ekran Görüntüleri 📸
 
