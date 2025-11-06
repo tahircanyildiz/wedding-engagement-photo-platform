@@ -38,6 +38,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/photos', require('./routes/photos'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/qrcode', require('./routes/qrcode'));
+app.use('/api/memories', require('./routes/memories'));
 
 // Health check endpoint for cron jobs
 const startTime = Date.now();

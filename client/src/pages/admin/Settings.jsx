@@ -6,6 +6,7 @@ const Settings = () => {
   const [settings, setSettings] = useState({
     upload_enabled: true,
     gallery_filter_enabled: true,
+    memory_filter_enabled: true,
     event_info: {
       couple_names: '',
       date: '',
@@ -192,6 +193,32 @@ const Settings = () => {
                 <span
                   className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
                     settings.gallery_filter_enabled ? 'translate-x-9' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Memory Filter Toggle */}
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-1">Anı Defteri Filtreleme</h3>
+                <p className="text-sm text-gray-600">
+                  Anı defterinde filtreleme özelliğini göster
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSettings(prev => ({
+                  ...prev,
+                  memory_filter_enabled: !prev.memory_filter_enabled
+                }))}
+                className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${
+                  settings.memory_filter_enabled ? 'bg-green-600' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                    settings.memory_filter_enabled ? 'translate-x-9' : 'translate-x-1'
                   }`}
                 />
               </button>

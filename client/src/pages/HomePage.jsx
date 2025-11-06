@@ -92,13 +92,19 @@ const HomePage = () => {
               onClick={() => navigate('/gallery')}
               className="btn-primary text-lg px-8 py-4 transform hover:scale-105 transition-transform"
             >
-              Fotoğrafları Gör
+              📸 Fotoğrafları Gör
             </button>
             <button
               onClick={() => navigate('/upload')}
               className="btn-secondary text-lg px-8 py-4 transform hover:scale-105 transition-transform"
             >
-              Fotoğraf Yükle
+              ⬆️ Fotoğraf Yükle
+            </button>
+            <button
+              onClick={() => navigate('/memories')}
+              className="btn-secondary text-lg px-8 py-4 transform hover:scale-105 transition-transform"
+            >
+              📖 Anı Defteri
             </button>
           </div>
 

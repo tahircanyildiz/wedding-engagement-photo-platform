@@ -122,6 +122,15 @@ export const qrcodeAPI = {
   generate: (url) => api.post('/qrcode/generate', { url }),
 };
 
+// Memories API
+export const memoriesAPI = {
+  getAll: (params) => api.get('/memories', { params }),
+  create: (data) => api.post('/memories', data),
+  delete: (id) => api.delete(`/memories/${id}`),
+  bulkDelete: (memoryIds) => api.post('/memories/bulk-delete', { memoryIds }),
+  getStats: () => api.get('/memories/stats/overview'),
+};
+
 // Cloudinary upload
 export const uploadToCloudinary = async (file) => {
   const formData = new FormData();

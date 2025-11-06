@@ -8,18 +8,24 @@ const Navbar = ({ transparent = false }) => {
           <Link to="/" className="text-2xl font-elegant font-bold text-romantic-600">
             Nişan Anılarımız
           </Link>
-          <div className="flex gap-4">
+          <div className="flex gap-4 sm:gap-6">
             <Link
               to="/gallery"
-              className="text-gray-700 hover:text-romantic-600 transition-colors font-medium"
+              className="text-gray-700 hover:text-romantic-600 transition-colors font-medium text-sm sm:text-base"
             >
               Galeri
             </Link>
             <Link
               to="/upload"
-              className="text-gray-700 hover:text-romantic-600 transition-colors font-medium"
+              className="text-gray-700 hover:text-romantic-600 transition-colors font-medium text-sm sm:text-base"
             >
-              Fotoğraf Yükle
+              Yükle
+            </Link>
+            <Link
+              to="/memories"
+              className="text-gray-700 hover:text-romantic-600 transition-colors font-medium text-sm sm:text-base"
+            >
+              Anı Defteri
             </Link>
           </div>
         </div>
