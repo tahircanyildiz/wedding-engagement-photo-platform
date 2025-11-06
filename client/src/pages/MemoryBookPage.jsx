@@ -94,6 +94,20 @@ const MemoryBookPage = () => {
 
   const filterEnabled = settings?.memory_filter_enabled !== false;
 
+  // Don't render until settings are loaded to prevent flash
+  if (!settings) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="pt-24 pb-12 px-4">
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-romantic-600"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Navbar />
