@@ -19,7 +19,7 @@ const Navbar = ({ transparent = false }) => {
               to="/upload"
               className="text-gray-700 hover:text-romantic-600 transition-colors font-medium text-sm sm:text-base"
             >
-              Yükle
+              Fotoğraf Yükle
             </Link>
             <Link
               to="/memories"

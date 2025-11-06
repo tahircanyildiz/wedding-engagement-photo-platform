@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Dashboard from './Dashboard';
 import PhotoManagement from './PhotoManagement';
 import QRCodeManagement from './QRCodeManagement';
+import MemoryManagement from './MemoryManagement';
 import Settings from './Settings';
 import AdminSettings from './AdminSettings';
 
@@ -37,6 +38,7 @@ const AdminDashboard = () => {
   const navLinks = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/admin/photos', label: 'Fotoğraflar', icon: '🖼️' },
+    { path: '/admin/memories', label: 'Anı Defteri', icon: '📖' },
     { path: '/admin/qrcode', label: 'QR Kod', icon: '📱' },
     { path: '/admin/settings', label: 'Ayarlar', icon: '⚙️' },
     { path: '/admin/admin-settings', label: 'Admin Ayarları', icon: '👤' },
@@ -166,6 +168,7 @@ const AdminDashboard = () => {
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/photos" element={<PhotoManagement />} />
+          <Route path="/memories" element={<MemoryManagement />} />
           <Route path="/qrcode" element={<QRCodeManagement />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/admin-settings" element={<AdminSettings />} />
