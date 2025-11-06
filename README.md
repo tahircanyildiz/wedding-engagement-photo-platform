@@ -2,8 +2,6 @@
 
 Modern, kullanıcı dostu ve tamamen responsive bir düğün/nişan fotoğraf paylaşım ve anı defteri uygulaması.
 
-![Ana Sayfa](screenshots/homepage.png)
-
 ## 📋 İçindekiler
 
 - [Özellikler](#özellikler-)
