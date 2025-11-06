@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 // Update settings (Admin only)
 router.put('/', authMiddleware, async (req, res) => {
   try {
-    const { upload_enabled, gallery_filter_enabled, memory_filter_enabled, event_info } = req.body;
+    const { upload_enabled, gallery_filter_enabled, memory_filter_enabled, memory_enabled, event_info } = req.body;
 
     const settings = await Settings.getSettings();
 
@@ -31,6 +31,10 @@ router.put('/', authMiddleware, async (req, res) => {
 
     if (memory_filter_enabled !== undefined) {
       settings.memory_filter_enabled = memory_filter_enabled;
+    }
+
+    if (memory_enabled !== undefined) {
+      settings.memory_enabled = memory_enabled;
     }
 
     if (event_info) {

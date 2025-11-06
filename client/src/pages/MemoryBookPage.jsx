@@ -93,6 +93,7 @@ const MemoryBookPage = () => {
   };
 
   const filterEnabled = settings?.memory_filter_enabled !== false;
+  const memoryEnabled = settings?.memory_enabled !== false;
 
   // Don't render until settings are loaded to prevent flash
   if (!settings) {
@@ -126,13 +127,29 @@ const MemoryBookPage = () => {
             </div>
 
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="btn-primary text-lg px-6 py-3 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              onClick={() => memoryEnabled && setIsModalOpen(true)}
+              disabled={!memoryEnabled}
+              className={`text-lg px-6 py-3 flex items-center gap-2 shadow-lg transition-all ${
+                memoryEnabled
+                  ? 'btn-primary hover:shadow-xl'
+                  : 'bg-gray-400 text-white cursor-not-allowed opacity-75'
+              }`}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Anı Ekle
+              {memoryEnabled ? (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Anı Ekle
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Anı Ekleme Kapalı
+                </>
+              )}
             </button>
           </div>
 
@@ -167,17 +184,21 @@ const MemoryBookPage = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center">
               <div className="text-8xl mb-6">📝</div>
               <h3 className="text-3xl font-bold text-gray-700 mb-3">
-                İlk anıyı sen paylaş!
+                {memoryEnabled ? 'İlk anıyı sen paylaş!' : 'Henüz anı yok'}
               </h3>
               <p className="text-gray-600 mb-6 text-lg">
-                Nişanımızla ilgili anılarını ve iyi dileklerini bizimle paylaş
+                {memoryEnabled
+                  ? 'Nişanımızla ilgili anılarını ve iyi dileklerini bizimle paylaş'
+                  : 'Anı ekleme şu anda kapalı'}
               </p>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="btn-primary text-lg px-8 py-3"
-              >
-                Anı Ekle
-              </button>
+              {memoryEnabled && (
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="btn-primary text-lg px-8 py-3"
+                >
+                  Anı Ekle
+                </button>
+              )}
             </div>
           )}
 

@@ -13,6 +13,10 @@ const settingsSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  memory_enabled: {
+    type: Boolean,
+    default: true
+  },
   event_info: {
     couple_names: {
       type: String,
