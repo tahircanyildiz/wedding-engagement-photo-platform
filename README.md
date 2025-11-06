@@ -1,385 +1,290 @@
-# 💒 Düğün Fotoğraf Paylaşım Platformu
+# Düğün/Nişan Fotoğraf Paylaşım Platformu 💒📸
 
-Modern ve kullanıcı dostu düğün/nişan fotoğraf paylaşım uygulaması. Misafirlerinizin çektiği fotoğrafları tek bir platformda toplayın ve QR kod ile kolayca paylaşın.
+Modern, kullanıcı dostu ve tamamen responsive bir düğün/nişan fotoğraf paylaşım ve anı defteri uygulaması.
 
-## ✨ Özellikler
+![Ana Sayfa](screenshots/homepage.png)
 
-### Genel Özellikler
-- 🎨 Modern ve romantik tasarım (pastel renkler)
-- 📱 Tam responsive tasarım (mobil, tablet, desktop)
-- ⚡ Hızlı ve performanslı
-- 🔒 Güvenli admin paneli
-- 🌐 Türkçe dil desteği
+## 📋 İçindekiler
 
-### Anasayfa
-- Çiftin isimleri, tarih ve yer bilgisi
-- Geri sayım sayacı (countdown timer)
-- Gösterişli hero section
-- Bilgilendirme bölümleri
+- [Özellikler](#özellikler-)
+- [Ekran Görüntüleri](#ekran-görüntüleri-)
+- [Teknolojiler](#teknolojiler-)
+- [Kurulum](#kurulum-)
+- [Kullanım](#kullanım-)
+- [Admin Paneli](#admin-paneli-)
+- [Deployment](#deployment-)
+- [Güvenlik](#güvenlik-)
+- [Proje Yapısı](#proje-yapısı-)
 
-### Galeri
-- Pinterest tarzı masonry layout
-- Lazy loading (performans için)
-- Lightbox ile fotoğraf görüntüleme
-- Fotoğraf indirme
-- Filtreleme (en yeni, en eski, yükleyene göre)
-- Responsive grid yapısı
+## Özellikler ✨
+
+- 📸 **Fotoğraf Galerisi** - Cloudinary entegrasyonu ile modern grid layout
+- 📖 **Anı Defteri** - Misafirlerin anılarını ve iyi dileklerini paylaşabileceği özel sayfa
+- 🎵 **Arka Plan Müziği** - Yumuşak ambient müzik ile ses kontrolü
+- 🔐 **Admin Paneli** - Fotoğraf ve anı yönetimi için güvenli dashboard
+- 📱 **Responsive Tasarım** - Tüm cihazlarda mükemmel görünüm
+- 🎨 **Modern UI** - Güzel gradient arkaplanlar ve animasyonlar
+- 🔒 **JWT Authentication** - Refresh token ile güvenli admin erişimi
+
+## Ekran Görüntüleri 📸
+
+### Ana Sayfa
+![Ana Sayfa](screenshots/homepage.png)
+Hoş geldiniz ekranı - Zarif tasarım ve kullanıcı dostu arayüz
+
+### Fotoğraf Galerisi
+![Galeri](screenshots/gallery.png)
+Modern grid layout ile fotoğraf galerisi
 
 ### Fotoğraf Yükleme
-- QR kod ile kolay erişim
-- Drag & drop yükleme
-- Multiple file upload
-- Önizleme özelliği
-- Progress bar
-- Cloudinary entegrasyonu
-- Yükleyen adı kaydetme
+![Yükleme](screenshots/upload.png)
+Sürükle-bırak veya tıklayarak fotoğraf yükleme
 
-### Admin Paneli
-- JWT ile güvenli giriş
-- Dashboard istatistikleri
-- Fotoğraf yönetimi
-- Toplu silme özelliği
-- QR kod oluşturma ve indirme
-- Yükleme durumu kontrolü
-- Etkinlik ayarları
+### Anı Defteri
+![Anı Defteri](screenshots/memory-book.png)
+Misafirlerin anılarını paylaşabileceği özel sayfa
 
-## 🛠️ Teknoloji Stack
+### Admin Girişi
+![Admin Girişi](screenshots/admin-login.png)
+Güvenli JWT tabanlı admin girişi
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
+Kapsamlı yönetim paneli ve istatistikler
+
+### Fotoğraf Yönetimi
+![Fotoğraf Yönetimi](screenshots/admin-photos.png)
+Fotoğrafları görüntüleme ve silme
+
+### Anı Yönetimi
+![Anı Yönetimi](screenshots/admin-memories.png)
+Misafir anılarını yönetme ve moderasyon
+
+### Ayarlar
+![Ayarlar](screenshots/admin-settings.png)
+Uygulama özelliklerini yapılandırma
+
+### QR Kod
+![QR Kod](screenshots/admin-qr.png)
+Kolay paylaşım için QR kod oluşturma
+
+### Hesap Ayarları
+![Hesap Ayarları](screenshots/admin-account.png)
+Admin kullanıcı adı ve şifre yönetimi
+
+## Teknolojiler 🛠️
 
 ### Frontend
-- React 18
-- React Router DOM
-- Tailwind CSS
-- Axios
-- React Dropzone
-- React Toastify
-- QRCode.react
-- Yet Another React Lightbox
-- React Masonry CSS
-- Date-fns
-- Vite
+- React 18 - Modern kullanıcı arayüzü
+- Vite - Hızlı geliştirme ortamı
+- Tailwind CSS - Utility-first CSS framework
+- React Router DOM - Sayfa yönlendirme
+- Axios - HTTP istekleri
+- React Toastify - Bildirimler
+- date-fns - Tarih işlemleri
 
 ### Backend
-- Node.js
-- Express.js
-- MongoDB (Mongoose)
-- JWT Authentication
-- Bcrypt.js
-- Cloudinary
-- QRCode
-- CORS
+- Node.js - JavaScript runtime
+- Express.js - Web framework
+- MongoDB (Mongoose) - NoSQL veritabanı
+- JWT Authentication - Güvenli kimlik doğrulama
+- Cloudinary - Görsel hosting
+- Bcrypt - Şifre hashleme
 
-## 📋 Gereksinimler
+## Kurulum 🚀
 
+### Gereksinimler
 - Node.js (v16 veya üzeri)
-- MongoDB (yerel veya cloud)
+- MongoDB Atlas hesabı
 - Cloudinary hesabı
-- npm veya yarn
 
-## 🚀 Kurulum
+### Kurulum Adımları
 
-### 1. Projeyi Klonlayın
+1. **Projeyi klonlayın**
 ```bash
 git clone <repository-url>
 cd weddindPhotos
 ```
 
-### 2. Bağımlılıkları Yükleyin
+2. **Backend Kurulumu**
 ```bash
-npm run install-all
+cd server
+npm install
+cp .env.example .env
+# .env dosyasını kendi bilgilerinizle düzenleyin
 ```
 
-Bu komut root, client ve server klasörlerindeki tüm bağımlılıkları yükler.
+3. **Frontend Kurulumu**
+```bash
+cd client
+npm install
+cp .env.example .env
+# .env dosyasını API URL ve Cloudinary bilgilerinizle düzenleyin
+```
 
-### 3. Environment Variables Ayarlayın
+### Ortam Değişkenleri
 
 #### Server (.env)
-`server` klasöründe `.env` dosyası oluşturun:
-
 ```env
-# MongoDB
-MONGODB_URI=mongodb://localhost:27017/wedding-photos
-
-# JWT Secret (güçlü bir şifre kullanın)
-JWT_SECRET=your-super-secret-jwt-key-change-this-to-something-secure
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-
-# Server
+MONGODB_URI=mongodb_baglanti_stringi
+JWT_SECRET=guclu_jwt_secret_anahtari
+CLOUDINARY_CLOUD_NAME=cloudinary_cloud_adi
+CLOUDINARY_API_KEY=cloudinary_api_key
+CLOUDINARY_API_SECRET=cloudinary_api_secret
+CLOUDINARY_UPLOAD_PRESET=upload_preset_adi
 PORT=5000
-NODE_ENV=development
-
-# Admin Credentials (ilk giriş için, sonra değiştirin!)
 ADMIN_USERNAME=admin
-ADMIN_PASSWORD=changeme123
+ADMIN_PASSWORD=guclu_sifre
 ```
 
 #### Client (.env)
-`client` klasöründe `.env` dosyası oluşturun:
-
 ```env
 VITE_API_URL=http://localhost:5000/api
-VITE_CLOUDINARY_CLOUD_NAME=your-cloud-name
-VITE_CLOUDINARY_UPLOAD_PRESET=your-upload-preset
+VITE_CLOUDINARY_CLOUD_NAME=cloudinary_cloud_adi
+VITE_CLOUDINARY_UPLOAD_PRESET=upload_preset_adi
 ```
 
-### 4. Cloudinary Ayarları
+### Uygulamayı Çalıştırma
 
-1. [Cloudinary](https://cloudinary.com/) hesabı oluşturun (ücretsiz)
-2. Dashboard'dan Cloud Name, API Key ve API Secret bilgilerinizi alın
-3. Settings > Upload > Upload Presets bölümünden yeni bir preset oluşturun:
-   - Preset name: `wedding-photos` (veya istediğiniz bir isim)
-   - Signing mode: `Unsigned` (önerilen)
-   - Folder: `wedding-photos` (opsiyonel)
-4. Preset adını `.env` dosyasına ekleyin
-
-### 5. MongoDB Ayarları
-
-#### Yerel MongoDB
+1. **Backend'i Başlatın**
 ```bash
-# MongoDB'yi başlatın
-mongod
-```
-
-#### MongoDB Atlas (Cloud)
-1. [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) hesabı oluşturun
-2. Cluster oluşturun
-3. Database Access'ten kullanıcı oluşturun
-4. Network Access'ten IP adresinizi whitelist'e ekleyin (0.0.0.0/0 tüm IP'lere izin verir)
-5. Connection string'i `.env` dosyasına ekleyin
-
-## 🎯 Kullanım
-
-### Development Mode
-
-Hem frontend hem backend'i aynı anda çalıştırın:
-
-```bash
+cd server
 npm run dev
 ```
 
-Veya ayrı ayrı:
-
+2. **Frontend'i Başlatın**
 ```bash
-# Backend
-npm run server
-
-# Frontend (yeni terminal)
-npm run client
+cd client
+npm run dev
 ```
 
-- Frontend: http://localhost:3000
-- Backend: http://localhost:5000
+3. Tarayıcınızda http://localhost:3000 adresini açın
 
-### Production Build
+## Admin Paneli 👨‍💼
 
+Admin paneline `/admin/login` adresinden erişebilirsiniz.
+
+Varsayılan giriş bilgileri (⚠️ Mutlaka değiştirin!):
+- Kullanıcı adı: `admin`
+- Şifre: `admin123`
+
+### Admin Özellikleri:
+- Fotoğrafları görüntüleme ve silme
+- Anıları yönetme ve moderasyon
+- Ayarları yapılandırma (yükleme, filtreler, vb.)
+- Kullanıcı adı ve şifre değiştirme
+- İstatistikleri görüntüleme
+- QR kod oluşturma
+
+## Deployment 🌐
+
+### Frontend (Vercel)
 ```bash
-# Client build
 cd client
 npm run build
+vercel deploy
 ```
 
-## 📱 Sayfa Yapısı
+### Backend (Render/Railway)
+- GitHub repository'nizi bağlayın
+- Ortam değişkenlerini ayarlayın
+- Deploy edin
 
-```
-/ (Anasayfa)
-├── /gallery (Fotoğraf Galerisi)
-├── /upload (Fotoğraf Yükleme - QR kod ile erişilebilir)
-└── /admin
-    ├── /login (Admin Girişi)
-    └── /dashboard (Admin Paneli)
-        ├── /dashboard (İstatistikler)
-        ├── /photos (Fotoğraf Yönetimi)
-        ├── /qrcode (QR Kod Yönetimi)
-        └── /settings (Ayarlar)
-```
+## Güvenlik 🔒
 
-## 🔐 Admin Paneli
+⚠️ **ÖNEMLİ**: Repository'yi public yapmadan önce:
+- ✅ `.env` dosyaları `.gitignore` içinde
+- ✅ Kodda sabit kodlanmış kimlik bilgisi yok
+- ✅ `.env.example` dosyaları sağlandı
+- ✅ Varsayılan admin şifresi değiştirildi
+- ✅ Production'da güçlü JWT secret kullanıldı
 
-### İlk Giriş
-- Kullanıcı adı: `admin` (veya .env'de belirlediğiniz)
-- Şifre: `changeme123` (veya .env'de belirlediğiniz)
+## Özellikler Detaylı 📋
 
-**ÖNEMLİ:** İlk girişten sonra şifreyi değiştirin!
+### Fotoğraf Yükleme
+- Sürükle-bırak veya tıklayarak yükleme
+- Cloudinary'ye direkt yükleme
+- Admin tarafından açılıp kapatılabilir
+- Otomatik optimizasyon
 
-### Admin Paneli Özellikleri
+### Anı Defteri
+- Misafirler anılarını paylaşabilir
+- Admin moderasyonu
+- Tarihe göre sıralama
+- Toplu silme seçeneği
 
-#### Dashboard
-- Toplam fotoğraf sayısı
-- Katkıda bulunan kişi sayısı
-- En çok fotoğraf yükleyen 5 kişi
-- Son yüklenen fotoğraflar
-- Yükleme durumu toggle
+### Müzik Çalar
+- Otomatik çalan arka plan müziği
+- Sessize alma kontrolü
+- Kesintisiz döngü
+- Tarayıcı autoplay desteği
 
-#### Fotoğraf Yönetimi
-- Tüm fotoğrafları görüntüleme
-- Grid layout
-- Fotoğraf silme (tekli)
-- Toplu silme
-- İsme göre arama
-- Kullanıcı bazında istatistikler
+## Katkıda Bulunma 🤝
 
-#### QR Kod Yönetimi
-- QR kod oluşturma
-- QR kod görüntüleme
-- PNG olarak indirme
-- Kullanım talimatları
+Katkılar memnuniyetle karşılanır! Lütfen Pull Request göndermekten çekinmeyin.
 
-#### Ayarlar
-- Etkinlik bilgileri düzenleme
-  - Çift isimleri
-  - Tarih
-  - Mekan
-  - Açıklama
-- Yükleme durumu (açık/kapalı)
-- Anasayfa önizlemesi
+## Lisans 📄
 
-## 🎨 Tasarım
+Bu proje MIT Lisansı altında lisanslanmıştır.
 
-### Renk Paleti
-- Romantic Pink: #e85a87
-- Pastel Pink: #ffc0cb
-- Pastel Lavender: #e6e6fa
-- Pastel Peach: #ffdab9
+## Destek 💬
 
-### Font Aileleri
-- Başlıklar: Playfair Display (elegant)
-- Metin: Poppins (modern)
+Destek için lütfen GitHub repository'de issue açın.
 
-### Tailwind Custom Classes
-- `.btn-primary`: Ana butonlar
-- `.btn-secondary`: İkincil butonlar
-- `.card`: Kart container'ları
-- `.input-field`: Form input'ları
-
-## 📂 Proje Yapısı
+## Proje Yapısı 📁
 
 ```
 weddindPhotos/
-├── client/                  # React Frontend
-│   ├── public/
+├── client/                 # Frontend (React + Vite)
+│   ├── public/            # Statik dosyalar
+│   │   └── background-music.mp3
 │   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── pages/          # Page components
-│   │   │   ├── admin/      # Admin pages
+│   │   ├── components/    # Yeniden kullanılabilir bileşenler
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── PhotoGrid.jsx
+│   │   │   ├── MusicPlayer.jsx
+│   │   │   └── ...
+│   │   ├── pages/         # Sayfa bileşenleri
 │   │   │   ├── HomePage.jsx
 │   │   │   ├── GalleryPage.jsx
-│   │   │   └── UploadPage.jsx
-│   │   ├── utils/          # Utilities
-│   │   │   ├── api.js      # API calls
-│   │   │   └── auth.js     # Auth helpers
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
+│   │   │   ├── UploadPage.jsx
+│   │   │   ├── MemoryBookPage.jsx
+│   │   │   └── admin/
+│   │   │       ├── AdminLogin.jsx
+│   │   │       ├── AdminDashboard.jsx
+│   │   │       ├── AdminPhotos.jsx
+│   │   │       ├── AdminMemories.jsx
+│   │   │       ├── AdminSettings.jsx
+│   │   │       ├── AdminQR.jsx
+│   │   │       └── AdminAccount.jsx
+│   │   ├── contexts/      # React Context API
+│   │   │   └── AuthContext.jsx
+│   │   ├── App.jsx        # Ana uygulama bileşeni
+│   │   └── main.jsx       # Giriş noktası
 │   └── package.json
-├── server/                  # Express Backend
-│   ├── config/             # Configuration
-│   │   ├── db.js
-│   │   └── cloudinary.js
-│   ├── models/             # MongoDB Models
+│
+├── server/                # Backend (Node.js + Express)
+│   ├── config/           # Yapılandırma dosyaları
+│   │   ├── db.js         # MongoDB bağlantısı
+│   │   └── cloudinary.js # Cloudinary yapılandırması
+│   ├── models/           # Mongoose modelleri
 │   │   ├── Photo.js
+│   │   ├── Memory.js
 │   │   ├── Admin.js
 │   │   └── Settings.js
-│   ├── routes/             # API Routes
-│   │   ├── auth.js
+│   ├── routes/           # API route'ları
 │   │   ├── photos.js
-│   │   ├── settings.js
-│   │   └── qrcode.js
-│   ├── middleware/         # Middleware
-│   │   └── auth.js
-│   ├── server.js
+│   │   ├── memories.js
+│   │   ├── admin.js
+│   │   └── settings.js
+│   ├── middleware/       # Express middleware
+│   │   └── auth.js       # JWT doğrulama
+│   ├── server.js         # Ana sunucu dosyası
 │   └── package.json
-├── .gitignore
-├── package.json
-└── README.md
+│
+├── screenshots/          # Ekran görüntüleri
+└── README.md            # Proje dokümantasyonu
 ```
-
-## 🔧 API Endpoints
-
-### Public Endpoints
-- `GET /api/photos` - Tüm fotoğrafları getir
-- `POST /api/photos/upload` - Fotoğraf yükle
-- `GET /api/settings` - Ayarları getir
-
-### Protected Endpoints (Admin)
-- `POST /api/auth/login` - Admin girişi
-- `GET /api/auth/verify` - Token doğrulama
-- `DELETE /api/photos/:id` - Fotoğraf sil
-- `POST /api/photos/bulk-delete` - Toplu silme
-- `GET /api/photos/stats/overview` - İstatistikler
-- `PUT /api/settings` - Ayarları güncelle
-- `PATCH /api/settings/toggle-upload` - Yükleme durumu toggle
-- `POST /api/qrcode/generate` - QR kod oluştur
-
-## 🎯 Kullanım Senaryosu
-
-1. **Düğün Öncesi Hazırlık**
-   - Admin paneline giriş yapın
-   - Ayarlar'dan etkinlik bilgilerini girin (isimler, tarih, yer)
-   - QR kod oluşturun ve yazdırın
-   - QR kodu davetiyelerinize, masalara veya düğün girişine yerleştirin
-
-2. **Düğün Günü**
-   - Misafirler QR kodu tarayarak `/upload` sayfasına erişir
-   - İsimlerini girer ve fotoğrafları yükler
-   - Yüklenen fotoğraflar otomatik olarak galeride görünür
-
-3. **Düğün Sonrası**
-   - Admin panelinden tüm fotoğrafları görüntüleyin
-   - İstenmeyen fotoğrafları silin
-   - İstatistikleri inceleyin
-   - Fotoğraf yüklemeyi kapatın (isteğe bağlı)
-
-## 🐛 Sorun Giderme
-
-### MongoDB Bağlantı Hatası
-```bash
-# MongoDB'nin çalıştığından emin olun
-mongod --version
-
-# MongoDB servisini başlatın
-sudo systemctl start mongod  # Linux
-brew services start mongodb-community  # macOS
-```
-
-### Port Zaten Kullanımda
-```bash
-# Port'u kullanan process'i bulun
-lsof -i :5000  # Backend port
-lsof -i :3000  # Frontend port
-
-# Process'i sonlandırın
-kill -9 <PID>
-```
-
-### Cloudinary Upload Hatası
-- Upload preset'in `unsigned` olduğundan emin olun
-- Cloud name, API key ve preset adının doğru olduğunu kontrol edin
-- CORS ayarlarını kontrol edin (Cloudinary dashboard)
-
-### Admin Girişi Yapılamıyor
-- `.env` dosyasındaki admin bilgilerini kontrol edin
-- MongoDB'de admin kaydının oluşturulduğunu kontrol edin
-- JWT_SECRET'in ayarlandığından emin olun
-
-## 📝 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır.
-
-## 🤝 Katkıda Bulunma
-
-1. Fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Commit edin (`git commit -m 'Add some amazing feature'`)
-4. Push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
-
-## 📧 İletişim
-
-Sorularınız için issue açabilirsiniz.
 
 ---
 
-Made with ❤️ for your special day
