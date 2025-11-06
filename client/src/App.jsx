@@ -9,6 +9,7 @@ import MemoryBookPage from './pages/MemoryBookPage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import MusicPlayer from './components/MusicPlayer';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             }
           />
         </Routes>
+        <MusicPlayer />
         <ToastContainer
           position="top-right"
           autoClose={3000}
