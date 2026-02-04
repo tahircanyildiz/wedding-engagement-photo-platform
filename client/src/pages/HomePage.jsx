@@ -64,10 +64,48 @@ const HomePage = () => {
               </p>
               <div className="h-px w-16 bg-romantic-400"></div>
             </div>
-            {eventInfo.location && (
-              <p className="text-lg text-gray-500 mt-3">
-                {eventInfo.location}
-              </p>
+            {(eventInfo.venue_name || eventInfo.location) && (
+              <div className="mt-4">
+                {eventInfo.venue_name && (
+                  <p className="text-lg font-semibold text-gray-700">
+                    {eventInfo.venue_name}
+                  </p>
+                )}
+                {eventInfo.location && (
+                  eventInfo.maps_url ? (
+                    <a
+                      href={eventInfo.maps_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-gray-500 hover:text-romantic-600 transition-colors mt-1 group"
+                    >
+                      <svg
+                        className="w-5 h-5 text-romantic-500 group-hover:scale-110 transition-transform"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="underline underline-offset-2">{eventInfo.location}</span>
+                    </a>
+                  ) : (
+                    <p className="inline-flex items-center gap-1 text-gray-500 mt-1">
+                      <svg
+                        className="w-5 h-5 text-romantic-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {eventInfo.location}
+                    </p>
+                  )
+                )}
+              </div>
             )}
           </div>
 

@@ -11,7 +11,9 @@ const Settings = () => {
     event_info: {
       couple_names: '',
       date: '',
+      venue_name: '',
       location: '',
+      maps_url: '',
       description: ''
     }
   });
@@ -116,15 +118,55 @@ const Settings = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mekan
+                Mekan Adı
+              </label>
+              <input
+                type="text"
+                value={settings.event_info.venue_name}
+                onChange={(e) => handleEventInfoChange('venue_name', e.target.value)}
+                className="input-field"
+                placeholder="Grand Düğün Salonu"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mekan Adresi
               </label>
               <input
                 type="text"
                 value={settings.event_info.location}
                 onChange={(e) => handleEventInfoChange('location', e.target.value)}
                 className="input-field"
-                placeholder="Nişan Salonu, İstanbul"
+                placeholder="Bağdat Caddesi No:123, Kadıköy, İstanbul"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Google Maps Linki
+              </label>
+              <div className="relative">
+                <input
+                  type="url"
+                  value={settings.event_info.maps_url}
+                  onChange={(e) => handleEventInfoChange('maps_url', e.target.value)}
+                  className="input-field pl-10"
+                  placeholder="https://maps.google.com/..."
+                />
+                <svg
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Google Maps'ten mekanı arayıp "Paylaş" butonundan linki kopyalayın
+              </p>
             </div>
 
             <div>
@@ -286,8 +328,21 @@ const Settings = () => {
               </p>
               <div className="h-px w-16 bg-romantic-400"></div>
             </div>
-            {settings.event_info.location && (
-              <p className="text-lg text-gray-500 mb-4">{settings.event_info.location}</p>
+            {(settings.event_info.venue_name || settings.event_info.location) && (
+              <div className="mb-4">
+                {settings.event_info.venue_name && (
+                  <p className="text-lg font-semibold text-gray-700">{settings.event_info.venue_name}</p>
+                )}
+                {settings.event_info.location && (
+                  <p className="text-gray-500 flex items-center justify-center gap-1">
+                    <svg className="w-4 h-4 text-romantic-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {settings.event_info.location}
+                  </p>
+                )}
+              </div>
             )}
             <p className="text-xl text-gray-700 max-w-2xl mx-auto">
               {settings.event_info.description || 'Açıklama'}

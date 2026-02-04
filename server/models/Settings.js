@@ -26,7 +26,15 @@ const settingsSchema = new mongoose.Schema({
       type: Date,
       default: null
     },
+    venue_name: {
+      type: String,
+      default: ''
+    },
     location: {
+      type: String,
+      default: ''
+    },
+    maps_url: {
       type: String,
       default: ''
     },
