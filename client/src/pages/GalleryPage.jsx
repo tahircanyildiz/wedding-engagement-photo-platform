@@ -25,41 +25,39 @@ const optimizeCloudinaryUrl = (url, type = 'thumbnail') => {
 
 const GalleryPage = () => {
   const [photos, setPhotos] = useState([]);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('newest');
   const [filterUploader, setFilterUploader] = useState('');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [filterEnabled, setFilterEnabled] = useState(true);
+
+  // Derived state - settings yüklenince hesaplanır
+  const filterEnabled = settings?.gallery_filter_enabled !== false;
 
   useEffect(() => {
-    fetchSettings();
-    fetchPhotos();
+    const loadData = async () => {
+      try {
+        setLoading(true);
+
+        // Settings ve photos'u paralel yükle ama ikisi de bitene kadar bekle
+        const [settingsRes, photosRes] = await Promise.all([
+          settingsAPI.get(),
+          photosAPI.getAll({ sort: sortBy })
+        ]);
+
+        setSettings(settingsRes.data);
+        setPhotos(photosRes.data);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast.error('Veriler yüklenirken hata oluştu');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [sortBy]);
-
-  const fetchSettings = async () => {
-    try {
-      const response = await settingsAPI.get();
-      setFilterEnabled(response.data.gallery_filter_enabled !== false);
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-      // Default to true if error
-      setFilterEnabled(true);
-    }
-  };
-
-  const fetchPhotos = async () => {
-    try {
-      setLoading(true);
-      const response = await photosAPI.getAll({ sort: sortBy });
-      setPhotos(response.data);
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-      toast.error('Fotoğraflar yüklenirken hata oluştu');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handlePhotoClick = (index) => {
     setCurrentPhotoIndex(index);
@@ -107,6 +105,27 @@ const GalleryPage = () => {
       description: format(new Date(photo.upload_date), 'dd MMMM yyyy, HH:mm', { locale: tr })
     })), [filteredPhotos]);
 
+  // Settings ve photos yüklenene kadar loading göster
+  if (loading || !settings) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="pt-24 pb-12 px-4">
+          <div className="container mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-elegant font-bold text-romantic-700 mb-4">
+                Fotoğraf Galerisi
+              </h1>
+            </div>
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-romantic-600"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -123,7 +142,7 @@ const GalleryPage = () => {
             </p>
           </div>
 
-          {/* Filters */}
+          {/* Filters - sadece filterEnabled true ise göster */}
           {filterEnabled && (
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
               <div className="grid md:grid-cols-2 gap-4">
@@ -159,15 +178,8 @@ const GalleryPage = () => {
             </div>
           )}
 
-          {/* Loading State */}
-          {loading && (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-romantic-600"></div>
-            </div>
-          )}
-
           {/* Empty State */}
-          {!loading && filteredPhotos.length === 0 && (
+          {filteredPhotos.length === 0 && (
             <div className="text-center py-20">
               <div className="text-6xl mb-4">📸</div>
               <h3 className="text-2xl font-bold text-gray-700 mb-2">
@@ -182,7 +194,7 @@ const GalleryPage = () => {
           )}
 
           {/* Gallery Grid */}
-          {!loading && filteredPhotos.length > 0 && (
+          {filteredPhotos.length > 0 && (
             <Masonry
               breakpointCols={breakpointColumns}
               className="flex -ml-4 w-auto"

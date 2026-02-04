@@ -18,10 +18,17 @@ const MemoryBookPage = () => {
     message: ''
   });
 
+  // Settings sadece ilk mount'ta yükle
   useEffect(() => {
     fetchSettings();
-    fetchMemories();
-  }, [sortBy]);
+  }, []);
+
+  // Memories sortBy değiştiğinde yeniden yükle
+  useEffect(() => {
+    if (settings) {
+      fetchMemories();
+    }
+  }, [sortBy, settings]);
 
   const fetchSettings = async () => {
     try {

@@ -28,13 +28,20 @@ const Settings = () => {
     try {
       setLoading(true);
       const response = await settingsAPI.get();
+      const data = response.data;
+      const eventInfo = data.event_info || {};
+
       setSettings({
-        ...response.data,
+        ...data,
         event_info: {
-          ...response.data.event_info,
-          date: response.data.event_info.date
-            ? new Date(response.data.event_info.date).toISOString().split('T')[0]
-            : ''
+          couple_names: eventInfo.couple_names || '',
+          date: eventInfo.date
+            ? new Date(eventInfo.date).toISOString().split('T')[0]
+            : '',
+          venue_name: eventInfo.venue_name || '',
+          location: eventInfo.location || '',
+          maps_url: eventInfo.maps_url || '',
+          description: eventInfo.description || ''
         }
       });
     } catch (error) {
