@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 // Kritik sayfalar - direkt import (ilk yükleme hızı için)
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
-import MusicPlayer from './components/MusicPlayer';
 
 // Lazy loaded sayfalar - kullanıcı gittiğinde yüklenir
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
@@ -46,7 +45,6 @@ function App() {
             />
           </Routes>
         </Suspense>
-        <MusicPlayer />
         <ToastContainer
           position="top-right"
           autoClose={3000}

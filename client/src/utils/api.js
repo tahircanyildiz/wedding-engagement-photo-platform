@@ -1,4 +1,5 @@
 import axios from 'axios';
+import imageCompression from 'browser-image-compression';
 import { getToken, getRefreshToken, setToken, removeToken } from './auth';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
@@ -131,10 +132,45 @@ export const memoriesAPI = {
   getStats: () => api.get('/memories/stats/overview'),
 };
 
+// Büyük dosyaları sıkıştır (10MB üstü) - kaliteyi koruyarak
+const compressImageIfNeeded = async (file) => {
+  const MAX_SIZE_MB = 9.5; // Cloudinary 10MB sınırı, güvenlik payı bırak
+  const fileSizeMB = file.size / (1024 * 1024);
+
+  // 10MB'den küçükse sıkıştırmaya gerek yok
+  if (fileSizeMB <= MAX_SIZE_MB) {
+    return file;
+  }
+
+  console.log(`Dosya sıkıştırılıyor: ${fileSizeMB.toFixed(2)}MB -> max ${MAX_SIZE_MB}MB`);
+
+  const options = {
+    maxSizeMB: MAX_SIZE_MB,
+    maxWidthOrHeight: 4096, // 4K çözünürlük korunsun
+    useWebWorker: true,
+    preserveExif: true, // EXIF verilerini koru (tarih, konum vb.)
+    initialQuality: 0.92, // Yüksek kalite başlangıç
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+    const newSizeMB = compressedFile.size / (1024 * 1024);
+    console.log(`Sıkıştırma tamamlandı: ${newSizeMB.toFixed(2)}MB`);
+    return compressedFile;
+  } catch (error) {
+    console.error('Sıkıştırma hatası:', error);
+    // Sıkıştırma başarısız olursa orijinal dosyayı dene
+    return file;
+  }
+};
+
 // Cloudinary upload - mobil için optimize edilmiş
 export const uploadToCloudinary = async (file, onProgress = null) => {
+  // Gerekirse dosyayı sıkıştır
+  const processedFile = await compressImageIfNeeded(file);
+
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('file', processedFile);
   formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
   formData.append('folder', 'wedding-photos');
 
