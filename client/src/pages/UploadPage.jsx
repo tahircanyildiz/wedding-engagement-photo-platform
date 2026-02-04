@@ -81,36 +81,51 @@ const UploadPage = () => {
     setUploadProgress(0);
 
     try {
-      // Upload to Cloudinary
-      const uploadPromises = files.map(file => uploadToCloudinary(file));
       const uploadedPhotos = [];
 
-      for (let i = 0; i < uploadPromises.length; i++) {
-        const photo = await uploadPromises[i];
-        uploadedPhotos.push(photo);
-        setUploadProgress(Math.round(((i + 1) / files.length) * 100));
+      // Dosyaları SIRAYLA yükle (mobil için daha güvenilir)
+      for (let i = 0; i < files.length; i++) {
+        try {
+          const photo = await uploadToCloudinary(files[i]);
+          uploadedPhotos.push(photo);
+          setUploadProgress(Math.round(((i + 1) / files.length) * 100));
+        } catch (uploadError) {
+          console.error(`File ${i + 1} upload error:`, uploadError);
+          // Kullanıcıya hangi dosyada hata olduğunu söyle
+          toast.error(`${i + 1}. fotoğraf yüklenemedi: ${uploadError.message || 'Bilinmeyen hata'}`);
+          // Diğer dosyalara devam et
+          continue;
+        }
       }
 
-      // Save to database
-      await photosAPI.upload({
-        photos: uploadedPhotos,
-        uploader_name: uploaderName.trim()
-      });
+      // En az bir fotoğraf yüklendiyse kaydet
+      if (uploadedPhotos.length > 0) {
+        await photosAPI.upload({
+          photos: uploadedPhotos,
+          uploader_name: uploaderName.trim()
+        });
 
-      toast.success(`Teşekkürler ${uploaderName.trim()}! ${files.length} fotoğraf başarıyla yüklendi`);
+        if (uploadedPhotos.length === files.length) {
+          toast.success(`Teşekkürler ${uploaderName.trim()}! ${files.length} fotoğraf başarıyla yüklendi`);
+        } else {
+          toast.warning(`${uploadedPhotos.length}/${files.length} fotoğraf yüklendi`);
+        }
 
-      // Reset form
-      setFiles([]);
-      setPreviews([]);
-      setUploaderName('');
-      setUploadProgress(0);
+        // Reset form
+        setFiles([]);
+        setPreviews([]);
+        setUploaderName('');
+        setUploadProgress(0);
+      } else {
+        toast.error('Hiçbir fotoğraf yüklenemedi. Lütfen tekrar deneyin.');
+      }
     } catch (error) {
       console.error('Upload error:', error);
       if (error.response?.status === 403) {
         toast.error('Fotoğraf yükleme şu an kapalı');
         setUploadEnabled(false);
       } else {
-        toast.error('Fotoğraflar yüklenirken hata oluştu');
+        toast.error(error.message || 'Fotoğraflar yüklenirken hata oluştu');
       }
     } finally {
       setUploading(false);
