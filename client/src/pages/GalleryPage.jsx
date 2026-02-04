@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { photosAPI, settingsAPI } from '../utils/api';
 import Navbar from '../components/Navbar';
 import Lightbox from 'yet-another-react-lightbox';
@@ -7,6 +7,21 @@ import Masonry from 'react-masonry-css';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+
+// Cloudinary URL'i optimize et (thumbnail veya full quality)
+const optimizeCloudinaryUrl = (url, type = 'thumbnail') => {
+  if (!url || !url.includes('cloudinary.com')) return url;
+
+  // Cloudinary transformasyonları
+  const transforms = {
+    thumbnail: 'w_400,h_400,c_fill,q_auto,f_auto', // Galeri için küçük
+    medium: 'w_800,q_auto,f_auto', // Orta boy
+    full: 'q_auto,f_auto' // Tam kalite ama optimize format
+  };
+
+  // /upload/ kısmından sonra transform ekle
+  return url.replace('/upload/', `/upload/${transforms[type]}/`);
+};
 
 const GalleryPage = () => {
   const [photos, setPhotos] = useState([]);
@@ -51,9 +66,11 @@ const GalleryPage = () => {
     setLightboxOpen(true);
   };
 
-  const handleDownload = async (url, uploaderName) => {
+  const handleDownload = useCallback(async (url, uploaderName) => {
     try {
-      const response = await fetch(url);
+      // İndirme için orijinal kalitede URL kullan
+      const downloadableUrl = optimizeCloudinaryUrl(url, 'full');
+      const response = await fetch(downloadableUrl);
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -67,7 +84,7 @@ const GalleryPage = () => {
       console.error('Download error:', error);
       toast.error('Fotoğraf indirilirken hata oluştu');
     }
-  };
+  }, []);
 
   const filteredPhotos = filterUploader
     ? photos.filter(photo =>
@@ -82,11 +99,13 @@ const GalleryPage = () => {
     640: 2
   };
 
-  const lightboxSlides = filteredPhotos.map(photo => ({
-    src: photo.cloudinary_url,
-    title: photo.uploader_name,
-    description: format(new Date(photo.upload_date), 'dd MMMM yyyy, HH:mm', { locale: tr })
-  }));
+  // Memoize lightbox slides - her render'da yeniden hesaplanmasın
+  const lightboxSlides = useMemo(() =>
+    filteredPhotos.map(photo => ({
+      src: optimizeCloudinaryUrl(photo.cloudinary_url, 'full'), // Lightbox için full kalite
+      title: photo.uploader_name,
+      description: format(new Date(photo.upload_date), 'dd MMMM yyyy, HH:mm', { locale: tr })
+    })), [filteredPhotos]);
 
   return (
     <div className="min-h-screen">
@@ -176,10 +195,11 @@ const GalleryPage = () => {
                   onClick={() => handlePhotoClick(index)}
                 >
                   <img
-                    src={photo.cloudinary_url}
+                    src={optimizeCloudinaryUrl(photo.cloudinary_url, 'thumbnail')}
                     alt={`Yükleyen: ${photo.uploader_name}`}
                     className="w-full h-auto block group-hover:scale-110 transition-transform duration-300"
                     loading="lazy"
+                    decoding="async"
                   />
 
                   {/* Overlay */}
