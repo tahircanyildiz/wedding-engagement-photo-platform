@@ -44,8 +44,14 @@ router.put('/', authMiddleware, async (req, res) => {
       if (event_info.date !== undefined) {
         settings.event_info.date = event_info.date;
       }
+      if (event_info.venue_name !== undefined) {
+        settings.event_info.venue_name = event_info.venue_name;
+      }
       if (event_info.location !== undefined) {
         settings.event_info.location = event_info.location;
+      }
+      if (event_info.maps_url !== undefined) {
+        settings.event_info.maps_url = event_info.maps_url;
       }
       if (event_info.description !== undefined) {
         settings.event_info.description = event_info.description;
