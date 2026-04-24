@@ -23,8 +23,12 @@ const settingsSchema = new mongoose.Schema({
       default: 'Tahir & Özge'
     },
     date: {
-      type: Date,
-      default: null
+      type: String,
+      default: ''
+    },
+    time: {
+      type: String,
+      default: ''
     },
     venue_name: {
       type: String,

@@ -36,9 +36,7 @@ const Settings = () => {
         ...data,
         event_info: {
           couple_names: eventInfo.couple_names || '',
-          date: eventInfo.date
-            ? new Date(eventInfo.date).toISOString().split('T')[0]
-            : '',
+          date: eventInfo.date || '',
           time: eventInfo.time || '',
           venue_name: eventInfo.venue_name || '',
           location: eventInfo.location || '',

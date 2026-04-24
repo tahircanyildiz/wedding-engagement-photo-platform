@@ -44,6 +44,9 @@ router.put('/', authMiddleware, async (req, res) => {
       if (event_info.date !== undefined) {
         settings.event_info.date = event_info.date;
       }
+      if (event_info.time !== undefined) {
+        settings.event_info.time = event_info.time;
+      }
       if (event_info.venue_name !== undefined) {
         settings.event_info.venue_name = event_info.venue_name;
       }
