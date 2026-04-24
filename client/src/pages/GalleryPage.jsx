@@ -101,20 +101,15 @@ const GalleryPage = () => {
     setLightboxOpen(true);
   };
 
-  const handleDownload = useCallback(async (url, uploaderName) => {
-    try {
-      const response = await fetch(optimizeCloudinaryUrl(url, 'full'));
-      const blob = await response.blob();
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `nisanfoto-${uploaderName}-${Date.now()}.jpg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(link.href);
-    } catch {
-      toast.error('Fotoğraf indirilemedi');
-    }
+  const handleDownload = useCallback((url, uploaderName) => {
+    const API_URL = import.meta.env.VITE_API_URL || '/api';
+    const proxyUrl = `${API_URL}/photos/download?url=${encodeURIComponent(url)}&name=${encodeURIComponent(uploaderName)}`;
+    const link = document.createElement('a');
+    link.href = proxyUrl;
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }, []);
 
   const handleShare = useCallback(async (photo) => {

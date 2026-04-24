@@ -46,6 +46,28 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Download proxy — CORS olmadan Firebase Storage'dan indirme (Public)
+router.get('/download', async (req, res) => {
+  const { url, name } = req.query;
+  if (!url) return res.status(400).json({ message: 'url gerekli' });
+
+  try {
+    const response = await fetch(decodeURIComponent(url));
+    if (!response.ok) throw new Error('Fetch failed');
+
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const ext = contentType.includes('webp') ? 'webp' : contentType.includes('png') ? 'png' : 'jpg';
+    const filename = `nisanfoto-${(name || 'foto').replace(/[^a-zA-Z0-9-_]/g, '_')}-${Date.now()}.${ext}`;
+
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Type', contentType);
+    response.body.pipe(res);
+  } catch (error) {
+    console.error('Download proxy error:', error);
+    res.status(500).json({ message: 'İndirme başarısız' });
+  }
+});
+
 // Like a photo (Public)
 router.patch('/:id/like', async (req, res) => {
   try {
