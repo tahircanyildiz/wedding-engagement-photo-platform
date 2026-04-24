@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const https = require('https');
 const multer = require('multer');
 const Photo = require('../models/Photo');
 const Settings = require('../models/Settings');
@@ -47,27 +48,31 @@ router.get('/', async (req, res) => {
 });
 
 // Download proxy — CORS olmadan Firebase Storage'dan indirme (Public)
-router.get('/download', async (req, res) => {
+router.get('/download', (req, res) => {
   const { url, name } = req.query;
   if (!url) return res.status(400).json({ message: 'url gerekli' });
 
-  try {
-    const response = await fetch(decodeURIComponent(url));
-    if (!response.ok) throw new Error(`Upstream ${response.status}`);
+  const decodedUrl = decodeURIComponent(url);
+  const safeName = (name || 'foto').replace(/[^a-zA-Z0-9-_]/g, '_');
 
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
+  https.get(decodedUrl, (upstream) => {
+    if (upstream.statusCode >= 400) {
+      res.status(502).json({ message: 'İndirme başarısız' });
+      upstream.resume();
+      return;
+    }
+
+    const contentType = upstream.headers['content-type'] || 'image/jpeg';
     const ext = contentType.includes('webp') ? 'webp' : contentType.includes('png') ? 'png' : 'jpg';
-    const safeName = (name || 'foto').replace(/[^a-zA-Z0-9-_]/g, '_');
     const filename = `nisanfoto-${safeName}-${Date.now()}.${ext}`;
 
-    const buffer = Buffer.from(await response.arrayBuffer());
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', contentType);
-    res.end(buffer);
-  } catch (error) {
-    console.error('Download proxy error:', error);
-    res.status(500).json({ message: 'İndirme başarısız' });
-  }
+    upstream.pipe(res);
+  }).on('error', (err) => {
+    console.error('Download proxy error:', err);
+    if (!res.headersSent) res.status(500).json({ message: 'İndirme başarısız' });
+  });
 });
 
 // Like a photo (Public)
