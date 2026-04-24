@@ -137,26 +137,31 @@ const compressImageIfNeeded = async (file) => {
   const MAX_SIZE_MB = 9.5;
   const fileSizeMB = file.size / (1024 * 1024);
 
+  // Android Chrome content:// URI'larında ERR_UPLOAD_FILE_CHANGED hatasını önlemek için
+  // dosyayı önce ArrayBuffer'a oku — bu sayede bellekte tam kopya oluşur,
+  // orijinal dosya referansından tamamen bağımsız hale gelir
+  const arrayBuffer = await file.arrayBuffer();
+  const memoryFile = new File([arrayBuffer], file.name, { type: file.type });
+
   if (fileSizeMB <= MAX_SIZE_MB) {
-    // Orijinal File referansını kopyala — ERR_UPLOAD_FILE_CHANGED'ı önler
-    return new File([file], file.name, { type: file.type });
+    return memoryFile;
   }
 
   const options = {
     maxSizeMB: MAX_SIZE_MB,
     maxWidthOrHeight: 4096,
-    useWebWorker: false, // Mobil veri'de WebWorker script yüklenemiyor
+    useWebWorker: false,
     preserveExif: true,
     initialQuality: 0.92,
   };
 
   try {
-    const compressed = await imageCompression(file, options);
-    // Yeni bir File nesnesi oluştur — tarayıcının dosya değişti hatası vermesini engeller
-    return new File([compressed], file.name, { type: file.type });
+    const compressed = await imageCompression(memoryFile, options);
+    const compressedBuffer = await compressed.arrayBuffer();
+    return new File([compressedBuffer], file.name, { type: file.type });
   } catch (error) {
-    console.error('Sıkıştırma hatası:', error);
-    return new File([file], file.name, { type: file.type });
+    console.error('Sıkıştırma hatası, orijinal kullanılıyor:', error);
+    return memoryFile;
   }
 };
 
