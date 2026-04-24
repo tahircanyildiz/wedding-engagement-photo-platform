@@ -134,19 +134,20 @@ export const memoriesAPI = {
 
 // Büyük dosyaları sıkıştır (10MB üstü) - kaliteyi koruyarak
 const compressImageIfNeeded = async (file) => {
-  const MAX_SIZE_MB = 9.5;
+  const TARGET_MB = 2;
   const fileSizeMB = file.size / (1024 * 1024);
 
-  if (fileSizeMB <= MAX_SIZE_MB) {
+  // 2MB altındaki dosyaları olduğu gibi gönder
+  if (fileSizeMB <= TARGET_MB) {
     return file;
   }
 
   const options = {
-    maxSizeMB: MAX_SIZE_MB,
-    maxWidthOrHeight: 4096,
+    maxSizeMB: TARGET_MB,
+    maxWidthOrHeight: 2560,
     useWebWorker: false,
     preserveExif: true,
-    initialQuality: 0.92,
+    initialQuality: 0.88,
   };
 
   try {
