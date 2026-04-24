@@ -53,15 +53,17 @@ router.get('/download', async (req, res) => {
 
   try {
     const response = await fetch(decodeURIComponent(url));
-    if (!response.ok) throw new Error('Fetch failed');
+    if (!response.ok) throw new Error(`Upstream ${response.status}`);
 
     const contentType = response.headers.get('content-type') || 'image/jpeg';
     const ext = contentType.includes('webp') ? 'webp' : contentType.includes('png') ? 'png' : 'jpg';
-    const filename = `nisanfoto-${(name || 'foto').replace(/[^a-zA-Z0-9-_]/g, '_')}-${Date.now()}.${ext}`;
+    const safeName = (name || 'foto').replace(/[^a-zA-Z0-9-_]/g, '_');
+    const filename = `nisanfoto-${safeName}-${Date.now()}.${ext}`;
 
+    const buffer = Buffer.from(await response.arrayBuffer());
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', contentType);
-    response.body.pipe(res);
+    res.end(buffer);
   } catch (error) {
     console.error('Download proxy error:', error);
     res.status(500).json({ message: 'İndirme başarısız' });
