@@ -125,7 +125,7 @@ const HomePage = () => {
           )}
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12 pb-24 md:pb-0">
             <button
               onClick={() => navigate('/gallery')}
               className="btn-primary text-lg px-8 py-4 transform hover:scale-105 transition-transform"

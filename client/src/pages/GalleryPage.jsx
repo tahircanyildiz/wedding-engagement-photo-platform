@@ -110,15 +110,15 @@ const GalleryPage = () => {
     return (
       <div className="min-h-screen">
         <Navbar />
-        <div className="pt-24 pb-12 px-4">
+        <div className="pt-20 pb-28 md:pb-12 px-4">
           <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-5xl font-elegant font-bold text-romantic-700 mb-4">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-5xl font-elegant font-bold text-romantic-700 mb-2">
                 Fotoğraf Galerisi
               </h1>
             </div>
             <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-romantic-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-romantic-600"></div>
             </div>
           </div>
         </div>
@@ -130,14 +130,14 @@ const GalleryPage = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-12 px-4">
+      <div className="pt-20 pb-28 md:pb-12 px-4">
         <div className="container mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-elegant font-bold text-romantic-700 mb-4">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl md:text-5xl font-elegant font-bold text-romantic-700 mb-1">
               Fotoğraf Galerisi
             </h1>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-500 text-sm md:text-lg">
               {filteredPhotos.length} fotoğraf
             </p>
           </div>
@@ -214,27 +214,27 @@ const GalleryPage = () => {
                     decoding="async"
                   />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                      <p className="font-bold text-lg mb-1">{photo.uploader_name}</p>
-                      <p className="text-sm opacity-90">
+                  {/* Overlay - mobilde her zaman görünür alt gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-2 md:p-4 text-white">
+                      <p className="font-semibold text-sm md:text-lg leading-tight">{photo.uploader_name}</p>
+                      <p className="text-xs opacity-80 hidden md:block">
                         {format(new Date(photo.upload_date), 'dd MMM yyyy, HH:mm', { locale: tr })}
                       </p>
                     </div>
                   </div>
 
-                  {/* Download Button */}
+                  {/* Download Button - mobilde her zaman görünür */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDownload(photo.cloudinary_url, photo.uploader_name);
                     }}
-                    className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg"
+                    className="absolute top-2 right-2 bg-white/90 hover:bg-white p-1.5 md:p-2 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 shadow-lg"
                     title="İndir"
                   >
                     <svg
-                      className="w-5 h-5 text-romantic-600"
+                      className="w-4 h-4 md:w-5 md:h-5 text-romantic-600"
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"

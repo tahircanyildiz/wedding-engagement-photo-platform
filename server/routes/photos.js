@@ -1,9 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const Photo = require('../models/Photo');
 const Settings = require('../models/Settings');
 const cloudinary = require('../config/cloudinary');
 const authMiddleware = require('../middleware/auth');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Sadece resim dosyaları kabul edilir'));
+  },
+});
 
 // Get all photos (Public)
 router.get('/', async (req, res) => {
@@ -25,6 +35,34 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Get photos error:', error);
     res.status(500).json({ message: 'Fotoğraflar yüklenirken hata oluştu' });
+  }
+});
+
+// Cloudinary proxy upload (Public) - mobil veri için
+router.post('/cloudinary-upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Dosya bulunamadı' });
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'wedding-photos' },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    res.json({
+      url: result.secure_url,
+      public_id: result.public_id,
+    });
+  } catch (error) {
+    console.error('Cloudinary proxy upload error:', error);
+    res.status(500).json({ message: 'Fotoğraf yüklenirken hata oluştu' });
   }
 });
 

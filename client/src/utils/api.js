@@ -166,57 +166,37 @@ const compressImageIfNeeded = async (file) => {
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const doCloudinaryUpload = async (file, onProgress) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-  formData.append('folder', 'wedding-photos');
+// Cloudinary upload - backend proxy üzerinden (mobil veri uyumlu)
+export const uploadToCloudinary = async (file, onProgress = null, delayMs = 0) => {
+  if (delayMs > 0) await sleep(delayMs);
 
-  const response = await axios.post(
-    `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-    formData,
-    {
+  const processedFile = await compressImageIfNeeded(file);
+
+  const formData = new FormData();
+  formData.append('file', processedFile);
+
+  try {
+    const response = await api.post('/photos/cloudinary-upload', formData, {
       timeout: 120000,
       headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: onProgress ? (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         onProgress(percentCompleted);
       } : undefined,
-    }
-  );
+    });
 
-  return {
-    url: response.data.secure_url,
-    public_id: response.data.public_id,
-  };
-};
-
-// Cloudinary upload - mobil için optimize edilmiş
-export const uploadToCloudinary = async (file, onProgress = null, delayMs = 0) => {
-  if (delayMs > 0) await sleep(delayMs);
-
-  const processedFile = await compressImageIfNeeded(file);
-
-  try {
-    return await doCloudinaryUpload(processedFile, onProgress);
-  } catch (firstError) {
-    // Bir kez otomatik tekrar dene (1 saniye bekleyerek)
+    return {
+      url: response.data.url,
+      public_id: response.data.public_id,
+    };
+  } catch (error) {
     if (!navigator.onLine) {
       throw new Error('İnternet bağlantınızı kontrol edin.');
     }
-    if (firstError.response?.status === 400) {
-      throw new Error('Dosya formatı desteklenmiyor veya dosya çok büyük.');
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Yükleme zaman aşımına uğradı. Lütfen tekrar deneyin.');
     }
-
-    await sleep(1000);
-    try {
-      return await doCloudinaryUpload(processedFile, onProgress);
-    } catch (retryError) {
-      if (retryError.code === 'ECONNABORTED') {
-        throw new Error('Yükleme zaman aşımına uğradı. Lütfen tekrar deneyin.');
-      }
-      throw retryError;
-    }
+    throw error;
   }
 };
 
