@@ -29,15 +29,28 @@ const UploadPage = () => {
     }
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles) => {
     const imageFiles = acceptedFiles.filter(file => file.type.startsWith('image/'));
     if (imageFiles.length !== acceptedFiles.length) {
       toast.warning('Sadece resim dosyaları kabul edilir');
     }
 
-    setFiles(prev => [...prev, ...imageFiles]);
+    // Android, çoklu dosya seçiminde kısa süre sonra okuma iznini iptal ediyor.
+    // Tüm dosyaları hemen ArrayBuffer'a okuyarak izin geçersizliğinden bağımsız hale getiriyoruz.
+    const memoryFiles = await Promise.all(
+      imageFiles.map(async (file) => {
+        try {
+          const buffer = await file.arrayBuffer();
+          return new File([buffer], file.name, { type: file.type });
+        } catch {
+          return file;
+        }
+      })
+    );
 
-    imageFiles.forEach(file => {
+    setFiles(prev => [...prev, ...memoryFiles]);
+
+    memoryFiles.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviews(prev => [...prev, { file, preview: reader.result }]);
