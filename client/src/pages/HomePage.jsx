@@ -115,12 +115,21 @@ const HomePage = () => {
           </p>
 
           {/* Countdown */}
-          {eventInfo.date && new Date(eventInfo.date) > new Date() && (
-            <div className="mb-12">
+          {eventInfo.date && (() => {
+            const target = eventInfo.time
+              ? new Date(`${eventInfo.date}T${eventInfo.time}`)
+              : new Date(eventInfo.date);
+            return target > new Date();
+          })() && (
+            <div className="mb-12 px-4">
               <h2 className="text-2xl md:text-3xl font-elegant text-romantic-600 mb-6">
                 Büyük Güne Kalan Süre
               </h2>
-              <Countdown targetDate={eventInfo.date} />
+              <Countdown targetDate={
+                eventInfo.time
+                  ? `${eventInfo.date}T${eventInfo.time}`
+                  : eventInfo.date
+              } />
             </div>
           )}
 

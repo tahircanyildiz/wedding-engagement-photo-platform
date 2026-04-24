@@ -134,33 +134,29 @@ export const memoriesAPI = {
 
 // Büyük dosyaları sıkıştır (10MB üstü) - kaliteyi koruyarak
 const compressImageIfNeeded = async (file) => {
-  const MAX_SIZE_MB = 9.5; // Cloudinary 10MB sınırı, güvenlik payı bırak
+  const MAX_SIZE_MB = 9.5;
   const fileSizeMB = file.size / (1024 * 1024);
 
-  // 10MB'den küçükse sıkıştırmaya gerek yok
   if (fileSizeMB <= MAX_SIZE_MB) {
-    return file;
+    // Orijinal File referansını kopyala — ERR_UPLOAD_FILE_CHANGED'ı önler
+    return new File([file], file.name, { type: file.type });
   }
-
-  console.log(`Dosya sıkıştırılıyor: ${fileSizeMB.toFixed(2)}MB -> max ${MAX_SIZE_MB}MB`);
 
   const options = {
     maxSizeMB: MAX_SIZE_MB,
-    maxWidthOrHeight: 4096, // 4K çözünürlük korunsun
-    useWebWorker: true,
-    preserveExif: true, // EXIF verilerini koru (tarih, konum vb.)
-    initialQuality: 0.92, // Yüksek kalite başlangıç
+    maxWidthOrHeight: 4096,
+    useWebWorker: false, // Mobil veri'de WebWorker script yüklenemiyor
+    preserveExif: true,
+    initialQuality: 0.92,
   };
 
   try {
-    const compressedFile = await imageCompression(file, options);
-    const newSizeMB = compressedFile.size / (1024 * 1024);
-    console.log(`Sıkıştırma tamamlandı: ${newSizeMB.toFixed(2)}MB`);
-    return compressedFile;
+    const compressed = await imageCompression(file, options);
+    // Yeni bir File nesnesi oluştur — tarayıcının dosya değişti hatası vermesini engeller
+    return new File([compressed], file.name, { type: file.type });
   } catch (error) {
     console.error('Sıkıştırma hatası:', error);
-    // Sıkıştırma başarısız olursa orijinal dosyayı dene
-    return file;
+    return new File([file], file.name, { type: file.type });
   }
 };
 

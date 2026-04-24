@@ -11,6 +11,7 @@ const Settings = () => {
     event_info: {
       couple_names: '',
       date: '',
+      time: '',
       venue_name: '',
       location: '',
       maps_url: '',
@@ -38,6 +39,7 @@ const Settings = () => {
           date: eventInfo.date
             ? new Date(eventInfo.date).toISOString().split('T')[0]
             : '',
+          time: eventInfo.time || '',
           venue_name: eventInfo.venue_name || '',
           location: eventInfo.location || '',
           maps_url: eventInfo.maps_url || '',
@@ -113,14 +115,26 @@ const Settings = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Etkinlik Tarihi
+                Etkinlik Tarihi ve Saati
               </label>
-              <input
-                type="date"
-                value={settings.event_info.date}
-                onChange={(e) => handleEventInfoChange('date', e.target.value)}
-                className="input-field"
-              />
+              <div className="flex gap-3">
+                <input
+                  type="date"
+                  value={settings.event_info.date}
+                  onChange={(e) => handleEventInfoChange('date', e.target.value)}
+                  className="input-field flex-1"
+                />
+                <input
+                  type="time"
+                  value={settings.event_info.time}
+                  onChange={(e) => handleEventInfoChange('time', e.target.value)}
+                  className="input-field w-32"
+                  placeholder="20:00"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Saat girilmezse geri sayım gece yarısından sayar
+              </p>
             </div>
 
             <div>
