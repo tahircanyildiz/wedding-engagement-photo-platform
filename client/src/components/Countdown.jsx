@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
 
+// Tarihi her zaman İstanbul saati (UTC+3) olarak yorumla
+const parseIstanbul = (dateStr) => {
+  if (!dateStr) return null;
+  if (dateStr.includes('T')) {
+    return new Date(dateStr.includes('+') || dateStr.endsWith('Z') ? dateStr : dateStr + '+03:00');
+  }
+  return new Date(dateStr + 'T00:00:00+03:00');
+};
+
 const Countdown = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
 
@@ -7,7 +16,7 @@ const Countdown = ({ targetDate }) => {
     if (!targetDate) return;
 
     const calculateTimeLeft = () => {
-      const difference = new Date(targetDate) - new Date();
+      const difference = parseIstanbul(targetDate) - new Date();
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
