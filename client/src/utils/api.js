@@ -1,5 +1,7 @@
 import axios from 'axios';
 import imageCompression from 'browser-image-compression';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from './firebase';
 import { getToken, getRefreshToken, setToken, removeToken } from './auth';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
@@ -160,40 +162,37 @@ const compressImageIfNeeded = async (file) => {
   }
 };
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Cloudinary upload - backend proxy üzerinden (mobil veri uyumlu)
-export const uploadToCloudinary = async (file, onProgress = null, delayMs = 0) => {
-  if (delayMs > 0) await sleep(delayMs);
-
+// Firebase Storage upload - doğrudan tarayıcıdan yükleme (mobil veri uyumlu, hızlı)
+export const uploadToCloudinary = async (file, onProgress = null) => {
   const processedFile = await compressImageIfNeeded(file);
 
-  const formData = new FormData();
-  formData.append('file', processedFile);
+  const fileName = `${Date.now()}_${processedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const storageRef = ref(storage, `wedding-photos/${fileName}`);
 
-  try {
-    const response = await api.post('/photos/cloudinary-upload', formData, {
-      timeout: 120000,
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: onProgress ? (progressEvent) => {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        onProgress(percentCompleted);
-      } : undefined,
-    });
+  return new Promise((resolve, reject) => {
+    const uploadTask = uploadBytesResumable(storageRef, processedFile);
 
-    return {
-      url: response.data.url,
-      public_id: response.data.public_id,
-    };
-  } catch (error) {
-    if (!navigator.onLine) {
-      throw new Error('İnternet bağlantınızı kontrol edin.');
-    }
-    if (error.code === 'ECONNABORTED') {
-      throw new Error('Yükleme zaman aşımına uğradı. Lütfen tekrar deneyin.');
-    }
-    throw error;
-  }
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        if (onProgress) {
+          const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          onProgress(pct);
+        }
+      },
+      (error) => {
+        if (!navigator.onLine) {
+          reject(new Error('İnternet bağlantınızı kontrol edin.'));
+        } else {
+          reject(error);
+        }
+      },
+      async () => {
+        const url = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve({ url, public_id: `wedding-photos/${fileName}` });
+      }
+    );
+  });
 };
 
 export default api;

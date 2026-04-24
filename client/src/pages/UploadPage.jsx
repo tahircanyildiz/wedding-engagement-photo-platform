@@ -35,8 +35,13 @@ const UploadPage = () => {
       toast.warning('Sadece resim dosyaları kabul edilir');
     }
 
-    // Android, çoklu dosya seçiminde kısa süre sonra okuma iznini iptal ediyor.
-    // Tüm dosyaları hemen ArrayBuffer'a okuyarak izin geçersizliğinden bağımsız hale getiriyoruz.
+    // Önizlemeleri hemen göster — URL.createObjectURL veri kopyalamaz, anında çalışır
+    setPreviews(prev => [
+      ...prev,
+      ...imageFiles.map(file => ({ preview: URL.createObjectURL(file) })),
+    ]);
+
+    // Arka planda tüm dosyaları belleğe oku (Android izin iptali koruması)
     const memoryFiles = await Promise.all(
       imageFiles.map(async (file) => {
         try {
@@ -49,14 +54,15 @@ const UploadPage = () => {
     );
 
     setFiles(prev => [...prev, ...memoryFiles]);
+  }, []);
 
-    memoryFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviews(prev => [...prev, { file, preview: reader.result }]);
-      };
-      reader.readAsDataURL(file);
-    });
+  // Object URL'leri temizle — bellek sızıntısını önler
+  useEffect(() => {
+    return () => {
+      previews.forEach(({ preview }) => {
+        if (preview?.startsWith('blob:')) URL.revokeObjectURL(preview);
+      });
+    };
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -67,6 +73,8 @@ const UploadPage = () => {
   });
 
   const removeFile = (index) => {
+    const preview = previews[index];
+    if (preview?.preview?.startsWith('blob:')) URL.revokeObjectURL(preview.preview);
     setFiles(prev => prev.filter((_, i) => i !== index));
     setPreviews(prev => prev.filter((_, i) => i !== index));
   };
