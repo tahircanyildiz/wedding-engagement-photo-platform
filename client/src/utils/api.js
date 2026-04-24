@@ -111,6 +111,7 @@ export const photosAPI = {
   delete: (id) => api.delete(`/photos/${id}`),
   bulkDelete: (photoIds) => api.post('/photos/bulk-delete', { photoIds }),
   getStats: () => api.get('/photos/stats/overview'),
+  like: (id) => api.patch(`/photos/${id}/like`),
 };
 
 // Settings API

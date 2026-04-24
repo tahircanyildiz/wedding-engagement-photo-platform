@@ -22,8 +22,8 @@ const PhotoManagement = () => {
   const fetchPhotos = async () => {
     try {
       setLoading(true);
-      const response = await photosAPI.getAll({ sort: 'newest' });
-      setPhotos(response.data);
+      const response = await photosAPI.getAll({ sort: 'newest', limit: 1000 });
+      setPhotos(response.data.photos ?? response.data);
     } catch (error) {
       console.error('Error fetching photos:', error);
       toast.error('Fotoğraflar yüklenirken hata oluştu');

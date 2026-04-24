@@ -96,16 +96,22 @@ const UploadPage = () => {
 
     try {
       const uploadedPhotos = [];
+      let completed = 0;
 
-      for (let i = 0; i < files.length; i++) {
-        setUploadProgress({ current: i + 1, total: files.length });
-        try {
-          const photo = await uploadToCloudinary(files[i]);
-          uploadedPhotos.push(photo);
-        } catch (uploadError) {
-          console.error(`File ${i + 1} upload error:`, uploadError);
-          toast.error(`${i + 1}. fotoğraf yüklenemedi`);
-        }
+      // 2'li gruplar halinde paralel yükle
+      for (let i = 0; i < files.length; i += 2) {
+        const chunk = files.slice(i, i + 2);
+        const results = await Promise.allSettled(chunk.map(f => uploadToCloudinary(f)));
+        results.forEach((result, j) => {
+          completed++;
+          setUploadProgress({ current: completed, total: files.length });
+          if (result.status === 'fulfilled') {
+            uploadedPhotos.push(result.value);
+          } else {
+            console.error(`File ${i + j + 1} upload error:`, result.reason);
+            toast.error(`${i + j + 1}. fotoğraf yüklenemedi`);
+          }
+        });
       }
 
       if (uploadedPhotos.length > 0) {

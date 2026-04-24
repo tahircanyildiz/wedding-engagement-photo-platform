@@ -15,26 +15,50 @@ const upload = multer({
   },
 });
 
-// Get all photos (Public)
+// Get all photos with pagination (Public)
 router.get('/', async (req, res) => {
   try {
-    const { sort = 'newest', uploader } = req.query;
+    const { sort = 'newest', uploader, page = 1, limit = 20 } = req.query;
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
 
     let query = {};
     if (uploader) {
       query.uploader_name = new RegExp(uploader, 'i');
     }
 
-    let sortOption = { upload_date: -1 }; // Default: newest
-    if (sort === 'oldest') {
-      sortOption = { upload_date: 1 };
-    }
+    const sortOption = sort === 'oldest' ? { upload_date: 1 } : { upload_date: -1 };
 
-    const photos = await Photo.find(query).sort(sortOption);
-    res.json(photos);
+    const [photos, total] = await Promise.all([
+      Photo.find(query).sort(sortOption).skip((pageNum - 1) * limitNum).limit(limitNum),
+      Photo.countDocuments(query),
+    ]);
+
+    res.json({
+      photos,
+      total,
+      page: pageNum,
+      hasMore: pageNum * limitNum < total,
+    });
   } catch (error) {
     console.error('Get photos error:', error);
     res.status(500).json({ message: 'Fotoğraflar yüklenirken hata oluştu' });
+  }
+});
+
+// Like a photo (Public)
+router.patch('/:id/like', async (req, res) => {
+  try {
+    const photo = await Photo.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { likes: 1 } },
+      { new: true }
+    );
+    if (!photo) return res.status(404).json({ message: 'Fotoğraf bulunamadı' });
+    res.json({ likes: photo.likes });
+  } catch (error) {
+    console.error('Like error:', error);
+    res.status(500).json({ message: 'Beğeni kaydedilemedi' });
   }
 });
 

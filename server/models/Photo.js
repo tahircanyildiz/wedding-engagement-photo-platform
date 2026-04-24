@@ -17,6 +17,10 @@ const photoSchema = new mongoose.Schema({
   upload_date: {
     type: Date,
     default: Date.now
+  },
+  likes: {
+    type: Number,
+    default: 0
   }
 });
 
