@@ -135,31 +135,25 @@ export const memoriesAPI = {
   getStats: () => api.get('/memories/stats/overview'),
 };
 
-// Büyük dosyaları sıkıştır (10MB üstü) - kaliteyi koruyarak
+// Tüm fotoğrafları WebP'ye çevir + 800KB hedef — yükleme hızı için
 const compressImageIfNeeded = async (file) => {
-  const TARGET_MB = 2;
-  const fileSizeMB = file.size / (1024 * 1024);
-
-  // 2MB altındaki dosyaları olduğu gibi gönder
-  if (fileSizeMB <= TARGET_MB) {
-    return file;
-  }
-
   const options = {
-    maxSizeMB: TARGET_MB,
-    maxWidthOrHeight: 2560,
+    maxSizeMB: 0.8,
+    maxWidthOrHeight: 1920,
     useWebWorker: false,
-    preserveExif: true,
-    initialQuality: 0.88,
+    fileType: 'image/webp',
+    initialQuality: 0.85,
   };
 
   try {
     const compressed = await imageCompression(file, options);
     const compressedBuffer = await compressed.arrayBuffer();
-    return new File([compressedBuffer], file.name, { type: file.type });
+    const webpName = file.name.replace(/\.[^.]+$/, '.webp');
+    return new File([compressedBuffer], webpName, { type: 'image/webp' });
   } catch (error) {
     console.error('Sıkıştırma hatası, orijinal kullanılıyor:', error);
-    return file;
+    const buffer = await file.arrayBuffer();
+    return new File([buffer], file.name, { type: file.type });
   }
 };
 

@@ -96,23 +96,33 @@ const UploadPage = () => {
 
     try {
       const uploadedPhotos = [];
-      let completed = 0;
+      const CONCURRENCY = 3;
 
-      // 2'li gruplar halinde paralel yükle
-      for (let i = 0; i < files.length; i += 2) {
-        const chunk = files.slice(i, i + 2);
-        const results = await Promise.allSettled(chunk.map(f => uploadToCloudinary(f)));
-        results.forEach((result, j) => {
-          completed++;
-          setUploadProgress({ current: completed, total: files.length });
-          if (result.status === 'fulfilled') {
-            uploadedPhotos.push(result.value);
-          } else {
-            console.error(`File ${i + j + 1} upload error:`, result.reason);
-            toast.error(`${i + j + 1}. fotoğraf yüklenemedi`);
+      // Pipeline: max 3 eşzamanlı, her biri bitince sıradaki hemen başlar
+      await new Promise((resolve) => {
+        let started = 0;
+        let finished = 0;
+
+        const startNext = () => {
+          while (started < files.length && started - finished < CONCURRENCY) {
+            const index = started++;
+            uploadToCloudinary(files[index])
+              .then((result) => { uploadedPhotos.push(result); })
+              .catch((err) => {
+                console.error(`File ${index + 1} upload error:`, err);
+                toast.error(`${index + 1}. fotoğraf yüklenemedi`);
+              })
+              .finally(() => {
+                finished++;
+                setUploadProgress({ current: finished, total: files.length });
+                if (finished === files.length) resolve();
+                else startNext();
+              });
           }
-        });
-      }
+        };
+
+        startNext();
+      });
 
       if (uploadedPhotos.length > 0) {
         await photosAPI.upload({
