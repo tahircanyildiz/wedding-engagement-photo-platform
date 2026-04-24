@@ -101,17 +101,6 @@ const GalleryPage = () => {
     setLightboxOpen(true);
   };
 
-  const handleDownload = useCallback((url, uploaderName) => {
-    const API_URL = import.meta.env.VITE_API_URL || '/api';
-    const proxyUrl = `${API_URL}/photos/download?url=${encodeURIComponent(url)}&name=${encodeURIComponent(uploaderName)}`;
-    const link = document.createElement('a');
-    link.href = proxyUrl;
-    link.download = '';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, []);
-
   const handleShare = useCallback(async (photo) => {
     const url = photo.cloudinary_url;
     if (navigator.share) {
@@ -272,16 +261,6 @@ const GalleryPage = () => {
                         </svg>
                       </button>
 
-                      {/* İndir */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleDownload(photo.cloudinary_url, photo.uploader_name); }}
-                        className="bg-white/90 hover:bg-white p-1.5 rounded-full shadow-lg md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
-                        title="İndir"
-                      >
-                        <svg className="w-3.5 h-3.5 text-romantic-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                      </button>
                     </div>
                   </div>
                 );
