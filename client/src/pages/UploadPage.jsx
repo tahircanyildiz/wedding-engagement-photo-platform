@@ -84,16 +84,16 @@ const UploadPage = () => {
       const uploadedPhotos = [];
 
       // Dosyaları SIRAYLA yükle (mobil için daha güvenilir)
+      // İlk fotoğraf hemen, sonrakiler arasında 600ms bekleme (Cloudinary rate limit önlemi)
       for (let i = 0; i < files.length; i++) {
         try {
-          const photo = await uploadToCloudinary(files[i]);
+          const delay = i === 0 ? 0 : 600;
+          const photo = await uploadToCloudinary(files[i], null, delay);
           uploadedPhotos.push(photo);
           setUploadProgress(Math.round(((i + 1) / files.length) * 100));
         } catch (uploadError) {
           console.error(`File ${i + 1} upload error:`, uploadError);
-          // Kullanıcıya hangi dosyada hata olduğunu söyle
           toast.error(`${i + 1}. fotoğraf yüklenemedi: ${uploadError.message || 'Bilinmeyen hata'}`);
-          // Diğer dosyalara devam et
           continue;
         }
       }

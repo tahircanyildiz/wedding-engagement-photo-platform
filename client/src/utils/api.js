@@ -164,48 +164,59 @@ const compressImageIfNeeded = async (file) => {
   }
 };
 
-// Cloudinary upload - mobil için optimize edilmiş
-export const uploadToCloudinary = async (file, onProgress = null) => {
-  // Gerekirse dosyayı sıkıştır
-  const processedFile = await compressImageIfNeeded(file);
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+const doCloudinaryUpload = async (file, onProgress) => {
   const formData = new FormData();
-  formData.append('file', processedFile);
+  formData.append('file', file);
   formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
   formData.append('folder', 'wedding-photos');
 
-  try {
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      formData,
-      {
-        timeout: 120000, // 2 dakika timeout (mobil için yeterli)
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: onProgress ? (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          onProgress(percentCompleted);
-        } : undefined,
-      }
-    );
+  const response = await axios.post(
+    `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    formData,
+    {
+      timeout: 120000,
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: onProgress ? (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onProgress(percentCompleted);
+      } : undefined,
+    }
+  );
 
-    return {
-      url: response.data.secure_url,
-      public_id: response.data.public_id,
-    };
-  } catch (error) {
-    // Daha detaylı hata mesajı
-    if (error.code === 'ECONNABORTED') {
-      throw new Error('Yükleme zaman aşımına uğradı. Lütfen tekrar deneyin.');
-    }
-    if (error.response?.status === 400) {
-      throw new Error('Dosya formatı desteklenmiyor veya dosya çok büyük.');
-    }
+  return {
+    url: response.data.secure_url,
+    public_id: response.data.public_id,
+  };
+};
+
+// Cloudinary upload - mobil için optimize edilmiş
+export const uploadToCloudinary = async (file, onProgress = null, delayMs = 0) => {
+  if (delayMs > 0) await sleep(delayMs);
+
+  const processedFile = await compressImageIfNeeded(file);
+
+  try {
+    return await doCloudinaryUpload(processedFile, onProgress);
+  } catch (firstError) {
+    // Bir kez otomatik tekrar dene (1 saniye bekleyerek)
     if (!navigator.onLine) {
       throw new Error('İnternet bağlantınızı kontrol edin.');
     }
-    throw error;
+    if (firstError.response?.status === 400) {
+      throw new Error('Dosya formatı desteklenmiyor veya dosya çok büyük.');
+    }
+
+    await sleep(1000);
+    try {
+      return await doCloudinaryUpload(processedFile, onProgress);
+    } catch (retryError) {
+      if (retryError.code === 'ECONNABORTED') {
+        throw new Error('Yükleme zaman aşımına uğradı. Lütfen tekrar deneyin.');
+      }
+      throw retryError;
+    }
   }
 };
 
