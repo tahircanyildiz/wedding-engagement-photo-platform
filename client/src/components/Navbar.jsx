@@ -43,6 +43,12 @@ const Navbar = ({ transparent = false }) => {
                 Fotoğraf Yükle
               </Link>
               <Link
+                to="/my-photos"
+                className={`font-medium transition-colors ${isActive('/my-photos') ? 'text-romantic-600' : 'text-gray-700 hover:text-romantic-600'}`}
+              >
+                Yüklediklerim
+              </Link>
+              <Link
                 to="/memories"
                 onMouseEnter={() => handlePreload('memories')}
                 className={`font-medium transition-colors ${isActive('/memories') ? 'text-romantic-600' : 'text-gray-700 hover:text-romantic-600'}`}

@@ -21,6 +21,10 @@ const photoSchema = new mongoose.Schema({
   likes: {
     type: Number,
     default: 0
+  },
+  delete_token: {
+    type: String,
+    select: false
   }
 });
 

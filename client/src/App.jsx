@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const UploadPage = lazy(() => import('./pages/UploadPage'));
 const MemoryBookPage = lazy(() => import('./pages/MemoryBookPage'));
+const MyPhotosPage = lazy(() => import('./pages/MyPhotosPage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/upload" element={<UploadPage />} />
+            <Route path="/my-photos" element={<MyPhotosPage />} />
             <Route path="/memories" element={<MemoryBookPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route

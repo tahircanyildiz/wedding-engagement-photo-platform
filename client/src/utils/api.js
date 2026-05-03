@@ -109,6 +109,7 @@ export const photosAPI = {
   getAll: (params) => api.get('/photos', { params }),
   upload: (data) => api.post('/photos/upload', data),
   delete: (id) => api.delete(`/photos/${id}`),
+  deleteWithToken: (id, token) => api.delete(`/photos/${id}/with-token`, { data: { token } }),
   bulkDelete: (photoIds) => api.post('/photos/bulk-delete', { photoIds }),
   getStats: () => api.get('/photos/stats/overview'),
   like: (id) => api.patch(`/photos/${id}/like`),

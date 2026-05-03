@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { photosAPI, settingsAPI, uploadToCloudinary } from '../utils/api';
+import { addMyUploads } from '../utils/myUploads';
 import Navbar from '../components/Navbar';
 import { toast } from 'react-toastify';
 
@@ -104,7 +106,10 @@ const UploadPage = () => {
 
     try {
       if (uploadedPhotos.length > 0) {
-        await photosAPI.upload({ photos: uploadedPhotos, uploader_name: uploaderName.trim() });
+        const res = await photosAPI.upload({ photos: uploadedPhotos, uploader_name: uploaderName.trim() });
+        if (res.data?.photos) {
+          addMyUploads(res.data.photos);
+        }
         if (uploadedPhotos.length === files.length) {
           toast.success(`Teşekkürler ${uploaderName.trim()}! ${files.length} fotoğraf yüklendi 🎉`);
         } else {
@@ -162,6 +167,15 @@ const UploadPage = () => {
           <div className="text-center py-6">
             <h1 className="text-3xl md:text-4xl font-elegant font-bold text-romantic-700 mb-1">Fotoğraf Yükle</h1>
             <p className="text-gray-500 text-sm">Nişandan çektiğin anları paylaş</p>
+            <Link
+              to="/my-photos"
+              className="inline-flex items-center gap-1 mt-3 text-sm text-romantic-600 hover:text-romantic-700 font-medium"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+              Yüklediklerim
+            </Link>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

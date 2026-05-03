@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const crypto = require('crypto');
 const Photo = require('../models/Photo');
 const Settings = require('../models/Settings');
 const cloudinary = require('../config/cloudinary');
@@ -109,22 +110,62 @@ router.post('/upload', async (req, res) => {
       return res.status(403).json({ message: 'Fotoğraf yükleme şu an kapalı' });
     }
 
-    // Save photos to database
+    // Save photos to database with delete tokens
     const savedPhotos = await Photo.insertMany(
       photos.map(photo => ({
         cloudinary_url: photo.url,
         cloudinary_public_id: photo.public_id,
-        uploader_name: uploader_name.trim()
+        uploader_name: uploader_name.trim(),
+        delete_token: crypto.randomBytes(16).toString('hex')
       }))
     );
 
     res.status(201).json({
       message: `Teşekkürler ${uploader_name.trim()}! ${photos.length} fotoğraf başarıyla yüklendi`,
-      photos: savedPhotos
+      photos: savedPhotos.map(p => ({
+        _id: p._id,
+        cloudinary_url: p.cloudinary_url,
+        uploader_name: p.uploader_name,
+        upload_date: p.upload_date,
+        delete_token: p.delete_token
+      }))
     });
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ message: 'Fotoğraf yüklenirken hata oluştu' });
+  }
+});
+
+// Delete photo with token (Public - yükleyen kişi kendi fotoğrafını siler)
+router.delete('/:id/with-token', async (req, res) => {
+  try {
+    const token = req.body?.token || req.query?.token;
+    if (!token) {
+      return res.status(400).json({ message: 'Token gerekli' });
+    }
+
+    // delete_token select:false olduğu için açıkça istiyoruz
+    const photo = await Photo.findById(req.params.id).select('+delete_token');
+
+    if (!photo) {
+      return res.status(404).json({ message: 'Fotoğraf bulunamadı' });
+    }
+
+    if (!photo.delete_token || photo.delete_token !== token) {
+      return res.status(403).json({ message: 'Bu fotoğrafı silme yetkiniz yok' });
+    }
+
+    try {
+      await cloudinary.uploader.destroy(photo.cloudinary_public_id);
+    } catch (cloudinaryError) {
+      console.error(`Cloudinary silme hatası (${photo.cloudinary_public_id}):`, cloudinaryError.message);
+    }
+
+    await Photo.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Fotoğraf silindi' });
+  } catch (error) {
+    console.error('Token ile silme hatası:', error);
+    res.status(500).json({ message: 'Fotoğraf silinirken hata oluştu' });
   }
 });
 
