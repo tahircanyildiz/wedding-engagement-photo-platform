@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { settingsAPI } from '../utils/api';
 import Countdown from '../components/Countdown';
+import Navbar from '../components/Navbar';
 import { toast } from 'react-toastify';
 
 const HomePage = () => {
@@ -37,8 +38,10 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
+      <Navbar transparent />
+
       {/* Hero Section */}
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+      <div className="min-h-screen flex flex-col items-center md:justify-center justify-start pt-24 md:pt-0 px-4 relative overflow-hidden">
         {/* Decorative Elements */}
         <div className="absolute top-20 left-10 w-32 h-32 bg-romantic-300/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-40 h-40 bg-pastel-lavender/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -109,8 +112,8 @@ const HomePage = () => {
             )}
           </div>
 
-          {/* Description */}
-          <p className="text-xl md:text-2xl text-gray-700 mb-12 font-light leading-relaxed">
+          {/* Description - mobilde gizli, scroll'da info section'da görünür */}
+          <p className="hidden md:block text-xl md:text-2xl text-gray-700 mb-12 font-light leading-relaxed">
             {eventInfo.description || 'Mutluluğumuzu sizinle paylaşmak istiyoruz!'}
           </p>
 
@@ -133,8 +136,8 @@ const HomePage = () => {
             </div>
           )}
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12 pb-24 md:pb-0">
+          {/* Buttons - sadece desktop'ta görünür, mobilde alt menü kullanılır */}
+          <div className="hidden md:flex flex-col sm:flex-row gap-4 justify-center mt-12">
             <button
               onClick={() => navigate('/gallery')}
               className="btn-primary text-lg px-8 py-4 transform hover:scale-105 transition-transform"
@@ -155,8 +158,8 @@ const HomePage = () => {
             </button>
           </div>
 
-          {/* Hearts Animation */}
-          <div className="mt-16 text-6xl animate-pulse">
+          {/* Hearts Animation - mobilde gizli, info section'da görünür */}
+          <div className="hidden md:block mt-16 text-6xl animate-pulse">
             💕
           </div>
         </div>
@@ -175,6 +178,14 @@ const HomePage = () => {
             <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
         </div>
+      </div>
+
+      {/* Mobil: hero'da gizlenen description ve kalp burada görünür */}
+      <div className="md:hidden px-4 py-12 text-center">
+        <p className="text-lg text-gray-700 mb-8 font-light leading-relaxed">
+          {eventInfo.description || 'Mutluluğumuzu sizinle paylaşmak istiyoruz!'}
+        </p>
+        <div className="text-5xl animate-pulse">💕</div>
       </div>
 
       {/* Info Section */}

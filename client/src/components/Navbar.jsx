@@ -23,7 +23,7 @@ const Navbar = ({ transparent = false }) => {
       <nav className={`fixed top-0 left-0 right-0 z-50 ${transparent ? 'bg-transparent' : 'bg-white/80 backdrop-blur-md shadow-md'}`}>
         <div className="container mx-auto px-4 py-3 md:py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="text-xl md:text-2xl font-elegant font-bold text-romantic-600">
+            <Link to="/" className={`text-xl md:text-2xl font-elegant font-bold text-romantic-600 ${isActive('/') ? 'hidden md:block' : ''}`}>
               Nişan Anılarımız
             </Link>
             {/* Desktop nav links */}

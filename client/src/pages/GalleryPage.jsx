@@ -101,24 +101,6 @@ const GalleryPage = () => {
     setLightboxOpen(true);
   };
 
-  const handleShare = useCallback(async (photo) => {
-    const url = photo.cloudinary_url;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: `${photo.uploader_name} tarafından paylaşıldı`, url });
-      } catch (e) {
-        if (e.name !== 'AbortError') toast.error('Paylaşım başarısız');
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(url);
-        toast.success('Link panoya kopyalandı');
-      } catch {
-        toast.error('Link kopyalanamadı');
-      }
-    }
-  }, []);
-
   const handleLike = useCallback(async (e, photoId) => {
     e.stopPropagation();
     if (likedPhotos.has(photoId)) return;
@@ -248,17 +230,6 @@ const GalleryPage = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                         {(photo.likes || 0) > 0 && <span>{photo.likes}</span>}
-                      </button>
-
-                      {/* Paylaş */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleShare(photo); }}
-                        className="bg-white/90 hover:bg-white p-1.5 rounded-full shadow-lg md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
-                        title="Paylaş"
-                      >
-                        <svg className="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                        </svg>
                       </button>
 
                     </div>
