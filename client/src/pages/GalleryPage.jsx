@@ -29,6 +29,7 @@ const saveLikedPhotos = (set) => {
 
 const GalleryPage = () => {
   const [photos, setPhotos] = useState([]);
+  const [total, setTotal] = useState(0);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -57,6 +58,7 @@ const GalleryPage = () => {
         ]);
         setSettings(settingsRes.data);
         setPhotos(photosRes.data.photos);
+        setTotal(photosRes.data.total ?? photosRes.data.photos.length);
         setHasMore(photosRes.data.hasMore);
       } catch {
         toast.error('Veriler yüklenirken hata oluştu');
@@ -75,6 +77,7 @@ const GalleryPage = () => {
       const nextPage = page + 1;
       const res = await photosAPI.getAll({ sort: sortBy, uploader: filterUploader || undefined, page: nextPage, limit: LIMIT });
       setPhotos(prev => [...prev, ...res.data.photos]);
+      setTotal(res.data.total ?? (photos.length + res.data.photos.length));
       setHasMore(res.data.hasMore);
       setPage(nextPage);
     } catch {
@@ -85,7 +88,9 @@ const GalleryPage = () => {
   }, [loadingMore, hasMore, page, sortBy, filterUploader]);
 
   // IntersectionObserver — sayfa sonuna yaklaşınca loadMore
+  // loading deps: initial load bitince loader DOM'a girince observer'ı attach et
   useEffect(() => {
+    if (loading) return;
     const el = loaderRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -94,7 +99,7 @@ const GalleryPage = () => {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [loadMore]);
+  }, [loadMore, loading]);
 
   const handlePhotoClick = (index) => {
     setCurrentPhotoIndex(index);
@@ -150,7 +155,9 @@ const GalleryPage = () => {
         <div className="container mx-auto">
           <div className="text-center mb-6">
             <h1 className="text-3xl md:text-5xl font-elegant font-bold text-romantic-700 mb-1">Fotoğraf Galerisi</h1>
-            <p className="text-gray-500 text-sm md:text-lg">{photos.length} fotoğraf yüklendi</p>
+            <p className="text-gray-500 text-sm md:text-lg">
+              {photos.length < total ? `${photos.length}/${total}` : total} fotoğraf
+            </p>
           </div>
 
           {filterEnabled && (

@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
   try {
     const { sort = 'newest', uploader, page = 1, limit = 20 } = req.query;
     const pageNum = Math.max(1, parseInt(page));
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+    const limitNum = Math.min(1000, Math.max(1, parseInt(limit)));
 
     let query = {};
     if (uploader) {

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Navbar from '../components/Navbar';
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -232,19 +230,10 @@ const MemoryBookPage = () => {
                         </h3>
                       </div>
 
-                      <div className="mb-3 p-4 bg-gradient-to-br from-romantic-50 to-pastel-lavender rounded-xl">
+                      <div className="p-4 bg-gradient-to-br from-romantic-50 to-pastel-lavender rounded-xl">
                         <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
                           "{memory.message}"
                         </p>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>
-                          {format(new Date(memory.created_at), 'dd MMMM yyyy, HH:mm', { locale: tr })}
-                        </span>
                       </div>
                     </div>
                   </div>
