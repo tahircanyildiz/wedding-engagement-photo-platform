@@ -36,6 +36,13 @@ const HomePage = () => {
 
   const eventInfo = settings?.event_info || {};
 
+  // Etkinlik geçmiş mi? Tarih + saat ile karşılaştır.
+  // Tarih yoksa geçmiş sayılmasın (ilk kurulum hali).
+  const eventTarget = eventInfo.date
+    ? new Date(eventInfo.time ? `${eventInfo.date}T${eventInfo.time}` : eventInfo.date)
+    : null;
+  const isPast = eventTarget ? eventTarget <= new Date() : false;
+
   return (
     <div className="min-h-screen">
       <Navbar transparent />
@@ -67,7 +74,7 @@ const HomePage = () => {
               </p>
               <div className="h-px w-16 bg-romantic-400"></div>
             </div>
-            {(eventInfo.venue_name || eventInfo.location) && (
+            {!isPast && (eventInfo.venue_name || eventInfo.location) && (
               <div className="mt-4">
                 {eventInfo.venue_name && (
                   <p className="text-lg font-semibold text-gray-700">
@@ -112,28 +119,27 @@ const HomePage = () => {
             )}
           </div>
 
-          {/* Description - mobilde gizli, scroll'da info section'da görünür */}
-          <p className="hidden md:block text-xl md:text-2xl text-gray-700 mb-12 font-light leading-relaxed">
-            {eventInfo.description || 'Bu özel günde bizimle olduğunuz için teşekkür ederiz 💕'}
-          </p>
+          {/* Description - sadece gelecek tarihte ve desktop'ta görünür */}
+          {!isPast && (
+            <p className="hidden md:block text-xl md:text-2xl text-gray-700 mb-12 font-light leading-relaxed">
+              {eventInfo.description || 'Mutluluğumuzu sizinle paylaşmak istiyoruz!'}
+            </p>
+          )}
 
           {/* Etkinlik durumu: geçmiş ise teşekkür, gelecek ise geri sayım */}
-          {eventInfo.date && (() => {
-            const target = eventInfo.time
-              ? new Date(`${eventInfo.date}T${eventInfo.time}`)
-              : new Date(eventInfo.date);
-            return target > new Date();
-          })() ? (
-            <div className="mb-12 px-4">
-              <h2 className="text-2xl md:text-3xl font-elegant text-romantic-600 mb-6">
-                Büyük Güne Kalan Süre
-              </h2>
-              <Countdown targetDate={
-                eventInfo.time
-                  ? `${eventInfo.date}T${eventInfo.time}`
-                  : eventInfo.date
-              } />
-            </div>
+          {!isPast ? (
+            eventInfo.date && (
+              <div className="mb-12 px-4">
+                <h2 className="text-2xl md:text-3xl font-elegant text-romantic-600 mb-6">
+                  Büyük Güne Kalan Süre
+                </h2>
+                <Countdown targetDate={
+                  eventInfo.time
+                    ? `${eventInfo.date}T${eventInfo.time}`
+                    : eventInfo.date
+                } />
+              </div>
+            )
           ) : (
             <div className="mb-12 px-4">
               <div className="inline-block bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg px-6 py-6 md:px-10 md:py-8 border border-romantic-200">
@@ -193,40 +199,54 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Mobil: hero'da gizlenen description burada görünür */}
-      <div className="md:hidden px-4 py-12 text-center">
-        <p className="text-lg text-gray-700 mb-8 font-light leading-relaxed">
-          {eventInfo.description || 'Bu özel günde bizimle olduğunuz için teşekkür ederiz 💕'}
-        </p>
-        <div className="text-5xl animate-pulse">💕</div>
-      </div>
+      {/* Mobil: hero'da gizlenen description burada görünür — sadece gelecek tarihte */}
+      {!isPast && (
+        <div className="md:hidden px-4 py-12 text-center">
+          <p className="text-lg text-gray-700 mb-8 font-light leading-relaxed">
+            {eventInfo.description || 'Mutluluğumuzu sizinle paylaşmak istiyoruz!'}
+          </p>
+          <div className="text-5xl animate-pulse">💕</div>
+        </div>
+      )}
 
-      {/* Info Section */}
+      {/* Info Section - geçmiş/gelecek için ayrı metin */}
       <div className="py-20 px-4 bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-elegant font-bold text-romantic-700 mb-6">
-            Nişanımıza Katıldığınız İçin Teşekkürler
+            {isPast ? 'Nişanımıza Katıldığınız İçin Teşekkürler' : 'Anılarımızı Paylaşın'}
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-8">
-            Bu özel günde yanımızda olduğunuz, sevginizi ve iyi dileklerinizi
-            paylaştığınız için size minnettarız. Çektiğiniz fotoğraflar bizim için
-            paha biçilemez; galerimizde hepsini birlikte yaşatabiliriz.
+            {isPast
+              ? 'Bu özel günde yanımızda olduğunuz, sevginizi ve iyi dileklerinizi paylaştığınız için size minnettarız. Çektiğiniz fotoğraflar bizim için paha biçilemez; galerimizde hepsini birlikte yaşatabiliriz.'
+              : 'Nişanımızda çektiğiniz fotoğrafları bizimle paylaşarak bu özel günü ölümsüzleştirmemize yardımcı olabilirsiniz. Tüm fotoğraflar galerimizde toplanacak ve herkes tarafından görülebilecek.'}
           </p>
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="card text-center hover:shadow-xl transition-shadow">
               <div className="text-4xl mb-4">📸</div>
-              <h3 className="text-xl font-bold text-romantic-600 mb-2">Galeriyi Keşfet</h3>
-              <p className="text-gray-600">O güzel anları yeniden yaşayın</p>
+              <h3 className="text-xl font-bold text-romantic-600 mb-2">
+                {isPast ? 'Galeriyi Keşfet' : 'Fotoğraf Çekin'}
+              </h3>
+              <p className="text-gray-600">
+                {isPast ? 'O güzel anları yeniden yaşayın' : 'Özel anları yakalayın'}
+              </p>
             </div>
             <div className="card text-center hover:shadow-xl transition-shadow">
               <div className="text-4xl mb-4">⬆️</div>
-              <h3 className="text-xl font-bold text-romantic-600 mb-2">Fotoğraflarını Ekle</h3>
-              <p className="text-gray-600">Çektiklerini bizimle paylaşabilirsin</p>
+              <h3 className="text-xl font-bold text-romantic-600 mb-2">
+                {isPast ? 'Fotoğraflarını Ekle' : 'Yükleyin'}
+              </h3>
+              <p className="text-gray-600">
+                {isPast ? 'Çektiklerini bizimle paylaşabilirsin' : 'QR kod ile kolayca yükleyin'}
+              </p>
             </div>
             <div className="card text-center hover:shadow-xl transition-shadow">
               <div className="text-4xl mb-4">❤️</div>
-              <h3 className="text-xl font-bold text-romantic-600 mb-2">Anı Defteri</h3>
-              <p className="text-gray-600">İyi dileklerin bizim için çok değerli</p>
+              <h3 className="text-xl font-bold text-romantic-600 mb-2">
+                {isPast ? 'Anı Defteri' : 'Paylaşın'}
+              </h3>
+              <p className="text-gray-600">
+                {isPast ? 'İyi dileklerin bizim için çok değerli' : 'Anıları birlikte yaşayın'}
+              </p>
             </div>
           </div>
         </div>
